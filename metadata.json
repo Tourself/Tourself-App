@@ -1,0 +1,7 @@
+{
+  "name": "TOURSELF: self-guided tours and quests",
+  "description": "A gamified city quest tour platform and free local tourist guide for Tbilisi, Georgia. Explore the city's secrets through exciting quests or use the comprehensive guide to find the best spots.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
