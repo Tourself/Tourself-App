@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { Quest, LocalGuideItem, QuestDifficulty, QuestionType, Review, Language, AuthUser, QuestStatus, InfoPage } from './types';
+import { Quest, LocalGuideItem, QuestDifficulty, QuestionType, Review, Language, AuthUser, QuestStatus, InfoPage, HomePageContent } from './types';
 
 // --- AUDIO UTILS ---
 // FIX: Implement the decode function to convert base64 to Uint8Array.
@@ -140,8 +140,7 @@ The naturally hot (38-40°C) water is rich in sulphur and other minerals, believ
 ];
 let MOCK_QUESTS: Quest[] = [
     { id: '1', authorId: 'user-admin', status: QuestStatus.Published, title: { en: 'Old Town Mysteries', ru: 'Тайны Старого города', ge: 'ძველი ქალაქის საიდუმლოებები' }, description: { en: 'Uncover secrets hidden in the narrow streets of historic Tbilisi.', ru: 'Раскройте секреты, спрятанные на узких улочках исторического Тбилиси.', ge: 'აღმოაჩინეთ ისტორიული თბილისის ვიწრო ქუჩებში დამალული საიდუმლოებები.' }, mainImage: 'https://picsum.photos/seed/oldtown/800/600', difficulty: QuestDifficulty.Easy, duration: 60, category: 'History', price: 9.99, steps: [
-        { stepIndex: 0, title: { en: 'The Clock Tower', ru: 'Часовая башня', ge: 'საათის კოშკი' }, clue: { en: 'Find the leaning tower of Tbilisi, where a puppet show marks the hour.', ru: 'Найдите падающую башню Тбилиси, где кукольное представление отмечает час.', ge: 'იპოვეთ თბილისის დახრილი კოშკი, სადაც თოჯინების შოუ საათს აღნიშნავს.' }, image: 'https://picsum.photos/seed/clock/800/600', coords: { lat: 41.6934, lng: 44.8078 }, question: { type: QuestionType.OpenText, question: { en: 'What animal appears at the top of the clock?', ru: 'Какое животное появляется наверху часов?', ge: 'რომელი ცხოველი ჩანს საათის თავზე?' }, answer: { en: 'angel', ru: 'ангел', ge: 'ანგელოზი' }, hint: { en: 'It has wings and appears on the hour.', ru: 'У него есть крылья и он появляется каждый час.', ge: 'მას ფრთები აქვს და საათში ერთხელ ჩნდება.'} }, postAnswerInfo: { en: 'This unique clock tower was created by renowned Georgian puppeteer Rezo Gabriadze. The angel strikes the bell on the hour.', ru: 'Эта уникальная башня с часами была создана известным грузинским кукольником Резо Габриадзе. Ангел бьет в колокол каждый час.', ge: 'ეს უნიკალური საათის კოშკი შეიქმნა ცნობილი ქართველი მეზღაპრის რეზო გაბრიაძის მიერ. ანგელოზი საათში ერთხელ რეკავს ზარს.' } },
-        { stepIndex: 1, title: { en: 'Bridge of Peace', ru: 'Мост Мира', ge: 'მშვიდობის ხიდი' }, clue: { en: 'Cross the modern glass bridge over the Mtkvari River.', ru: 'Перейдите по современному стеклянному мосту через реку Мтквари.', ge: 'გადაკვეთეთ თანამედროვე მინის ხიდი მტკვარზე.' }, image: 'https://picsum.photos/seed/bridge/800/600', coords: { lat: 41.6934, lng: 44.8092 }, question: { type: QuestionType.MultipleChoice, question: { en: 'What does the bridge light up with at night?', ru: 'Чем освещается мост ночью?', ge: 'რითი ნათდება ხიდი ღამით?' }, options: [{en: 'Morse Code', ru: 'Азбука Морзе', ge: 'მორზეს ანბანი'}, {en: 'Fireworks', ru: 'Фейерверки', ge: 'ფეიერვერკები'}, {en: 'Laser Show', ru: 'Лазерное шоу', ge: 'ლაზერული შოუ'}], answer: { en: '0', ru: '0', ge: '0' } } }
+        { stepIndex: 0, title: { en: 'The Clock Tower', ru: 'Часовая башня', ge: 'საათის კოშკი' }, clue: { en: 'Find the leaning tower of Tbilisi, where a puppet show marks the hour.', ru: 'Найдите падающую башню Тбилиси, где кукольное представление отмечает час.', ge: 'იპოვეთ თბილისის დახრილი კოშკი, სადაც თოჯინების შოუ საათს აღნიშნავს.' }, image: 'https://picsum.photos/seed/clock/800/600', coords: { lat: 41.6934, lng: 44.8078 }, question: { type: QuestionType.OpenText, question: { en: 'What animal appears at the top of the clock?', ru: 'Какое животное появляется наверху часов?', ge: 'რომელი ცხოველი ჩანს საათის თავზე?' }, answer: { en: 'angel', ru: 'ангел', ge: 'ანგელოზი' }, hint: { en: 'It has wings and appears on the hour.', ru: 'У него есть крылья и он появляется каждый час.', ge: 'მას ფრთები აქვს და საათში ერთხელ ჩნდება.'} }, postAnswerInfo: { en: 'This unique clock tower was created by renowned Georgian puppeteer Rezo Gabriadze. The angel strikes the bell on the hour.', ru: 'Эта уникальная башня с часами была создана известным грузинским кукольником Резо Габриадзе. Ангел бьет в колокол каждый час.', ge: 'ეს უნიკალური საათის კოშკი შეიქმნა ცნობილი ქართველი მეზღაპრის რეზო გაბრიაძის მიერ. ანგელოზი საათში ერთხელ რეკავს ზარს.' } }
     ]},
     { id: '2', authorId: 'user-admin', status: QuestStatus.Published, title: { en: 'Soviet Ghosts', ru: 'Призраки Советов', ge: 'საბჭოთა აჩრდილები' }, description: { en: 'Explore the brutalist architecture and remnants of Georgia\'s Soviet past.', ru: 'Исследуйте бруталистическую архитектуру и остатки советского прошлого Грузии.', ge: 'გამოიკვლიეთ საქართველოს საბჭოთა წარსულის ბრუტალისტური არქიტექტურა და ნაშთები.' }, mainImage: 'https://picsum.photos/seed/soviet/800/600', difficulty: QuestDifficulty.Hard, duration: 120, category: 'Architecture', price: 9.99, steps: [] },
     { id: '3', authorId: 'user-guide-1', status: QuestStatus.Pending, title: { en: 'Tbilisi Food Tour', ru: 'Гастрономический тур по Тбилиси', ge: 'თბილისის კულინარიული ტური' }, description: { en: 'A delicious journey through the tastes of Georgia.', ru: 'Вкусное путешествие по грузинской кухне.', ge: 'უგემრიელესი მოგზაურობა ქართული გემოების სამყაროში.' }, mainImage: 'https://picsum.photos/seed/food/800/600', difficulty: QuestDifficulty.Medium, duration: 90, category: 'Food', price: 9.99, steps: [] }
@@ -184,6 +183,17 @@ let MOCK_INFO_PAGES: InfoPage[] = [
         }
     },
 ];
+
+let MOCK_HOME_PAGE_CONTENT: HomePageContent = {
+    id: 'home',
+    heroImage: 'https://images.unsplash.com/photo-1562122502-39f1c0d54032?q=80&w=1920&auto=format&fit=crop',
+    title: { en: 'TOURSELF', ru: 'TOURSELF', ge: 'TOURSELF' },
+    subtitle: { en: 'Quests, Guides, and Local Life.', ru: 'Квесты, гиды и местная жизнь.', ge: 'ქვესტები, გიდები და ადგილობრივი ცხოვრება.' },
+    card1Title: { en: 'Explore Local Guide', ru: 'Изучить Гид по городу', ge: 'ადგილობრივი გიდის დათვალიერება' },
+    card1Description: { en: 'Discover top sites, restaurants, and services. Completely free.', ru: 'Откройте для себя лучшие места, рестораны и услуги. Совершенно бесплатно.', ge: 'აღმოაჩინეთ საუკეთესო ადგილები, რესტორნები და სერვისები. სრულიად უფასოდ.' },
+    card2Title: { en: 'Find City Quests', ru: 'Найти Городские Квесты', ge: 'იპოვეთ ქალაქის ქვესტები' },
+    card2Description: { en: 'Unlock exciting, gamified tours to explore the city\'s secrets.', ru: 'Разблокируйте захватывающие игровые туры, чтобы исследовать секреты города.', ge: 'გახსენით საინტერესო, თამაშით სავსე ტურები ქალაქის საიდუმლოებების შესასწავლად.' },
+};
 
 // --- NEW AUTH SERVICE ---
 export const authService = {
@@ -377,6 +387,17 @@ export const api = {
         return data;
     }
     return undefined;
+  },
+
+  // Home Page Content
+  getHomePageContent: async (): Promise<HomePageContent> => {
+    await new Promise(res => setTimeout(res, 300));
+    return MOCK_HOME_PAGE_CONTENT;
+  },
+  updateHomePageContent: async (data: HomePageContent): Promise<HomePageContent> => {
+    await new Promise(res => setTimeout(res, 500));
+    MOCK_HOME_PAGE_CONTENT = data;
+    return MOCK_HOME_PAGE_CONTENT;
   },
 
   // Notifications

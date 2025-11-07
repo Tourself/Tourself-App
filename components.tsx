@@ -626,7 +626,6 @@ export const RichTextInput: React.FC<{
                     contentEditable
                     onInput={handleInput}
                     className="block w-full min-h-[120px] p-3 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm"
-                    dangerouslySetInnerHTML={{ __html: value }} // Initialize with value
                 />
             </div>
         </div>

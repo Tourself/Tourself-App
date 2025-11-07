@@ -1,11 +1,12 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useLanguage } from '../contexts';
 import { useTranslations } from '../hooks';
 import { Button, Card, Header, Input, NotificationOptIn, LoadingSpinner } from '../components';
 import { geofencingService, api, calculateDistance } from '../services';
-import { LocalGuideItem } from '../types';
+import { LocalGuideItem, HomePageContent } from '../types';
 
 export const LanguageSelectorPage: React.FC = () => {
   const { setLanguage, t } = useLanguage();
@@ -34,6 +35,15 @@ export const HomePage: React.FC = () => {
     const { t, language } = useTranslations();
     const [nearestSite, setNearestSite] = useState<LocalGuideItem | null>(null);
     const [isLoadingLocation, setIsLoadingLocation] = useState(true);
+    const [content, setContent] = useState<HomePageContent | null>(null);
+    const [isLoadingContent, setIsLoadingContent] = useState(true);
+
+    useEffect(() => {
+        api.getHomePageContent().then(data => {
+            setContent(data);
+            setIsLoadingContent(false);
+        });
+    }, []);
 
     useEffect(() => {
         let isMounted = true;
@@ -102,8 +112,16 @@ export const HomePage: React.FC = () => {
         };
     }, [t, language]);
 
+    if (isLoadingContent) {
+        return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
+    }
+    
+    if (!content) {
+        return <div className="p-4">Error loading page content.</div>
+    }
+
     const heroStyle = {
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1562122502-39f1c0d54032?q=80&w=1920&auto=format&fit=crop')`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${content.heroImage}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed',
@@ -113,20 +131,20 @@ export const HomePage: React.FC = () => {
         <div className="min-h-screen" style={heroStyle}>
             <Header title={t('home')} showMenu />
             <div className="text-center p-8 text-light">
-                <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">{t('welcome_to_tbilisi')}</h1>
-                <p className="mt-2 text-lg text-white drop-shadow-md">{t('your_adventure_awaits')}</p>
+                <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">{content.title[language]}</h1>
+                <p className="mt-2 text-lg text-white drop-shadow-md">{content.subtitle[language]}</p>
             </div>
             <div className="p-4 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <Link to="/guide" className="block transform hover:scale-105 transition-transform">
                     <Card className="h-full bg-white/90 backdrop-blur-sm">
-                        <h2 className="text-2xl font-bold text-primary mb-2">{t('explore_local_guide')}</h2>
-                        <p className="text-gray-600">{t('free_guide_desc')}</p>
+                        <h2 className="text-2xl font-bold text-primary mb-2">{content.card1Title[language]}</h2>
+                        <p className="text-gray-600">{content.card1Description[language]}</p>
                     </Card>
                 </Link>
                 <Link to="/quests" className="block transform hover:scale-105 transition-transform">
                     <Card className="h-full bg-white/90 backdrop-blur-sm">
-                        <h2 className="text-2xl font-bold text-primary mb-2">{t('find_city_quests')}</h2>
-                        <p className="text-gray-600">{t('paid_quests_desc')}</p>
+                        <h2 className="text-2xl font-bold text-primary mb-2">{content.card2Title[language]}</h2>
+                        <p className="text-gray-600">{content.card2Description[language]}</p>
                     </Card>
                 </Link>
             </div>

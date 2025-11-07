@@ -4,7 +4,7 @@ import { useTranslations } from '../hooks';
 import { useAuth } from '../contexts';
 import { Button, Card, Header, Input, StarRating, LoadingSpinner, Textarea, Select, ImageUpload, LocationSearchInput, RichTextInput } from '../components';
 import { api, authService } from '../services';
-import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage } from '../types';
+import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage, HomePageContent } from '../types';
 
 export const AdminLayout: React.FC = () => {
     const { t } = useTranslations();
@@ -51,6 +51,7 @@ export const AdminLayout: React.FC = () => {
                         <Route path="guide/edit/:id" element={<AdminGuideFormPage />} />
                         <Route path="guides" element={<AdminGuidesListPage />} />
                         <Route path="pages" element={<AdminPagesListPage />} />
+                        <Route path="pages/edit/home" element={<AdminHomePageFormPage />} />
                         <Route path="pages/edit/:id" element={<AdminPageEditForm />} />
                         <Route path="submissions" element={<AdminSubmissionsPage />} />
                         <Route path="reviews" element={<AdminReviewManagementPage />} />
@@ -980,6 +981,12 @@ const AdminPagesListPage: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
+                        <tr key="home-page-key">
+                            <td className="px-6 py-4 whitespace-nowrap font-medium">Home Page</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <Button onClick={() => navigate(`/admin/pages/edit/home`)} variant="secondary">Edit</Button>
+                            </td>
+                        </tr>
                         {pages.map(page => (
                             <tr key={page.id}>
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">{page.title[language]}</td>
@@ -1058,6 +1065,125 @@ const AdminPageEditForm: React.FC = () => {
                 <div className="mt-6 flex justify-end gap-4">
                     <Button type="button" variant="outline" onClick={() => navigate('/admin/pages')}>Cancel</Button>
                     <Button type="submit" disabled={isSaving}>{isSaving ? t('loading') : t('save_page')}</Button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+const AdminHomePageFormPage: React.FC = () => {
+    const navigate = useNavigate();
+    const { t } = useTranslations();
+    const [content, setContent] = useState<HomePageContent | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        api.getHomePageContent().then(data => {
+            setContent(data);
+            setLoading(false);
+        });
+    }, []);
+
+    const handleMLChange = (field: keyof Omit<HomePageContent, 'id' | 'heroImage'>, lang: Language, value: string) => {
+        if (content) {
+            setContent({
+                ...content,
+                [field]: { ...(content[field] as any), [lang]: value }
+            });
+        }
+    };
+    
+    const handleFieldChange = (field: keyof HomePageContent, value: string) => {
+        if (content) {
+            setContent({ ...content, [field]: value });
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!content) return;
+        setIsSaving(true);
+        await api.updateHomePageContent(content);
+        setIsSaving(false);
+        navigate('/admin/pages');
+    };
+
+    if (loading) return <LoadingSpinner />;
+    if (!content) return <p>Home page content not found.</p>;
+    
+    return (
+        <div>
+            <h1 className="text-3xl font-bold mb-6 text-dark">Edit Home Page</h1>
+            <form onSubmit={handleSubmit}>
+                <Card className="space-y-6">
+                    <ImageUpload
+                        label="Hero Background Image"
+                        currentImage={content.heroImage}
+                        onImageUpload={(base64) => handleFieldChange('heroImage', base64)}
+                    />
+                     <div>
+                        <h3 className="font-semibold mb-2">Main Title</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Input label="EN" value={content.title.en} onChange={e => handleMLChange('title', 'en', e.target.value)} />
+                            <Input label="RU" value={content.title.ru} onChange={e => handleMLChange('title', 'ru', e.target.value)} />
+                            <Input label="GE" value={content.title.ge} onChange={e => handleMLChange('title', 'ge', e.target.value)} />
+                        </div>
+                    </div>
+                     <div>
+                        <h3 className="font-semibold mb-2">Subtitle</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Input label="EN" value={content.subtitle.en} onChange={e => handleMLChange('subtitle', 'en', e.target.value)} />
+                            <Input label="RU" value={content.subtitle.ru} onChange={e => handleMLChange('subtitle', 'ru', e.target.value)} />
+                            <Input label="GE" value={content.subtitle.ge} onChange={e => handleMLChange('subtitle', 'ge', e.target.value)} />
+                        </div>
+                    </div>
+                    <div className="border-t pt-4">
+                        <h3 className="font-semibold mb-2">Card 1: Explore Local Guide</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Title</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <Input label="EN" value={content.card1Title.en} onChange={e => handleMLChange('card1Title', 'en', e.target.value)} />
+                                    <Input label="RU" value={content.card1Title.ru} onChange={e => handleMLChange('card1Title', 'ru', e.target.value)} />
+                                    <Input label="GE" value={content.card1Title.ge} onChange={e => handleMLChange('card1Title', 'ge', e.target.value)} />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Description</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <Input label="EN" value={content.card1Description.en} onChange={e => handleMLChange('card1Description', 'en', e.target.value)} />
+                                    <Input label="RU" value={content.card1Description.ru} onChange={e => handleMLChange('card1Description', 'ru', e.target.value)} />
+                                    <Input label="GE" value={content.card1Description.ge} onChange={e => handleMLChange('card1Description', 'ge', e.target.value)} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="border-t pt-4">
+                        <h3 className="font-semibold mb-2">Card 2: Find City Quests</h3>
+                        <div className="space-y-4">
+                             <div>
+                                <h4 className="font-medium text-sm mb-1">Title</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <Input label="EN" value={content.card2Title.en} onChange={e => handleMLChange('card2Title', 'en', e.target.value)} />
+                                    <Input label="RU" value={content.card2Title.ru} onChange={e => handleMLChange('card2Title', 'ru', e.target.value)} />
+                                    <Input label="GE" value={content.card2Title.ge} onChange={e => handleMLChange('card2Title', 'ge', e.target.value)} />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 className="font-medium text-sm mb-1">Description</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <Input label="EN" value={content.card2Description.en} onChange={e => handleMLChange('card2Description', 'en', e.target.value)} />
+                                    <Input label="RU" value={content.card2Description.ru} onChange={e => handleMLChange('card2Description', 'ru', e.target.value)} />
+                                    <Input label="GE" value={content.card2Description.ge} onChange={e => handleMLChange('card2Description', 'ge', e.target.value)} />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
+                <div className="mt-6 flex justify-end gap-4">
+                    <Button type="button" variant="outline" onClick={() => navigate('/admin/pages')}>Cancel</Button>
+                    <Button type="submit" disabled={isSaving}>{isSaving ? t('loading') : "Save Home Page"}</Button>
                 </div>
             </form>
         </div>

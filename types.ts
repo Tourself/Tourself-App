@@ -1,4 +1,5 @@
 
+
 export type Language = 'en' | 'ru' | 'ge';
 
 export type MultilingualString = {
@@ -110,4 +111,15 @@ export interface InfoPage {
   id: string;
   title: MultilingualString;
   content: MultilingualString;
+}
+
+export interface HomePageContent {
+  id: 'home';
+  heroImage: string;
+  title: MultilingualString;
+  subtitle: MultilingualString;
+  card1Title: MultilingualString;
+  card1Description: MultilingualString;
+  card2Title: MultilingualString;
+  card2Description: MultilingualString;
 }
