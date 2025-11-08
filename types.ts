@@ -126,3 +126,12 @@ export interface HomePageContent {
   card2Title: MultilingualString;
   card2Description: MultilingualString;
 }
+
+export interface PromoCode {
+  id: string;
+  code: string;
+  questIds: string[]; // empty array means all quests
+  usageLimit: number; // 0 for unlimited
+  currentUsage: number;
+  expirationDate: string; // ISO string e.g. "2024-12-31"
+}

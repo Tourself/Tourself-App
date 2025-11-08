@@ -4,7 +4,7 @@ import { useTranslations } from '../hooks';
 import { useAuth } from '../contexts';
 import { Button, Card, Header, Input, StarRating, LoadingSpinner, Textarea, Select, ImageUpload, LocationSearchInput, RichTextInput } from '../components';
 import { api, authService } from '../services';
-import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage, HomePageContent, ServiceSubCategory } from '../types';
+import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage, HomePageContent, ServiceSubCategory, PromoCode } from '../types';
 
 export const AdminLayout: React.FC = () => {
     const { t } = useTranslations();
@@ -29,6 +29,7 @@ export const AdminLayout: React.FC = () => {
                     <NavLink to="/admin/quests" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('manage_quests')}</NavLink>
                     <NavLink to="/admin/guide" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('manage_guide')}</NavLink>
                     <NavLink to="/admin/pages" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('edit_pages')}</NavLink>
+                    <NavLink to="/admin/promocodes" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('manage_promo_codes')}</NavLink>
                     <NavLink to="/admin/submissions" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('submissions')}</NavLink>
                     <NavLink to="/admin/guides" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('manage_guides')}</NavLink>
                     <NavLink to="/admin/reviews" className={({isActive}) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}>{t('manage_reviews')}</NavLink>
@@ -53,6 +54,9 @@ export const AdminLayout: React.FC = () => {
                         <Route path="pages" element={<AdminPagesListPage />} />
                         <Route path="pages/edit/home" element={<AdminHomePageFormPage />} />
                         <Route path="pages/edit/:id" element={<AdminPageEditForm />} />
+                        <Route path="promocodes" element={<AdminPromoCodeListPage />} />
+                        <Route path="promocodes/new" element={<AdminPromoCodeFormPage />} />
+                        <Route path="promocodes/edit/:id" element={<AdminPromoCodeFormPage />} />
                         <Route path="submissions" element={<AdminSubmissionsPage />} />
                         <Route path="reviews" element={<AdminReviewManagementPage />} />
                         <Route path="notifications" element={<AdminPushNotificationPage />} />
@@ -1200,6 +1204,172 @@ const AdminHomePageFormPage: React.FC = () => {
                 <div className="mt-6 flex justify-end gap-4">
                     <Button type="button" variant="outline" onClick={() => navigate('/admin/pages')}>Cancel</Button>
                     <Button type="submit" disabled={isSaving}>{isSaving ? t('loading') : "Save Home Page"}</Button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+const AdminPromoCodeListPage: React.FC = () => {
+    const { t } = useTranslations();
+    const navigate = useNavigate();
+    const [codes, setCodes] = useState<PromoCode[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchCodes = async () => {
+        setLoading(true);
+        const data = await api.getPromoCodes();
+        setCodes(data);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchCodes();
+    }, []);
+
+    const handleDelete = async (codeId: string) => {
+        if (window.confirm('Are you sure you want to delete this promo code?')) {
+            await api.deletePromoCode(codeId);
+            fetchCodes();
+        }
+    };
+
+    if (loading) return <LoadingSpinner />;
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold text-dark">{t('manage_promo_codes')}</h1>
+                <Button onClick={() => navigate('/admin/promocodes/new')}>{t('create_new_promo_code')}</Button>
+            </div>
+            <Card className="overflow-x-auto">
+                <table className="min-w-full">
+                    <thead className="bg-gray-50">
+                        <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('code')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('current_usage')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('expiration_date')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('applicable_quests')}</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {codes.map(code => (
+                            <tr key={code.id}>
+                                <td className="px-6 py-4 whitespace-nowrap font-mono">{code.code}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{code.currentUsage} / {code.usageLimit === 0 ? '∞' : code.usageLimit}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{code.expirationDate}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{code.questIds.length === 0 ? t('all_quests') : `${code.questIds.length} quest(s)`}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                    <Button onClick={() => navigate(`/admin/promocodes/edit/${code.id}`)} variant="secondary">Edit</Button>
+                                    <Button onClick={() => handleDelete(code.id)} variant="outline">Delete</Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </Card>
+        </div>
+    );
+};
+
+const AdminPromoCodeFormPage: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { t, language } = useTranslations();
+    const [promoCode, setPromoCode] = useState<Omit<PromoCode, 'id'>>({
+        code: '',
+        questIds: [],
+        usageLimit: 100,
+        currentUsage: 0,
+        expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    });
+    const [allQuests, setAllQuests] = useState<Quest[]>([]);
+    const [isForAllQuests, setIsForAllQuests] = useState(true);
+    const [loading, setLoading] = useState(true);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const questsData = await api.getAllQuests();
+            setAllQuests(questsData);
+            if (id) {
+                const codes = await api.getPromoCodes();
+                const codeToEdit = codes.find(c => c.id === id);
+                if (codeToEdit) {
+                    setPromoCode(codeToEdit);
+                    setIsForAllQuests(codeToEdit.questIds.length === 0);
+                }
+            }
+            setLoading(false);
+        };
+        fetchData();
+    }, [id]);
+
+    const handleChange = (field: keyof Omit<PromoCode, 'id'>, value: any) => {
+        setPromoCode(prev => ({...prev, [field]: value}));
+    };
+
+    const handleQuestSelection = (questId: string) => {
+        setPromoCode(prev => {
+            const newQuestIds = prev.questIds.includes(questId)
+                ? prev.questIds.filter(id => id !== questId)
+                : [...prev.questIds, questId];
+            return {...prev, questIds: newQuestIds};
+        });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsSaving(true);
+        const codeToSave = {
+            ...promoCode,
+            questIds: isForAllQuests ? [] : promoCode.questIds,
+        };
+
+        if (id) {
+            await api.updatePromoCode(id, codeToSave as PromoCode);
+        } else {
+            await api.createPromoCode(codeToSave);
+        }
+        setIsSaving(false);
+        navigate('/admin/promocodes');
+    };
+
+    if (loading) return <LoadingSpinner />;
+
+    return (
+        <div>
+            <h1 className="text-3xl font-bold mb-6 text-dark">{id ? t('edit_promo_code') : t('create_new_promo_code')}</h1>
+            <form onSubmit={handleSubmit}>
+                <Card className="space-y-6">
+                    <Input label={t('code')} value={promoCode.code} onChange={e => handleChange('code', e.target.value.toUpperCase())} required />
+                    <Input type="number" label={t('usage_limit')} value={promoCode.usageLimit} onChange={e => handleChange('usageLimit', parseInt(e.target.value))} required />
+                    <Input type="date" label={t('expiration_date')} value={promoCode.expirationDate} onChange={e => handleChange('expirationDate', e.target.value)} required />
+                    
+                    <div>
+                        <h3 className="font-semibold mb-2">{t('applicable_quests')}</h3>
+                        <div className="space-y-2">
+                            <label className="flex items-center">
+                                <input type="checkbox" checked={isForAllQuests} onChange={e => setIsForAllQuests(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"/>
+                                <span className="ml-2">{t('all_quests')}</span>
+                            </label>
+                            {!isForAllQuests && (
+                                <div className="pl-6 border-l-2 max-h-60 overflow-y-auto space-y-1 py-2">
+                                    {allQuests.map(quest => (
+                                        <label key={quest.id} className="flex items-center">
+                                            <input type="checkbox" checked={promoCode.questIds.includes(quest.id)} onChange={() => handleQuestSelection(quest.id)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"/>
+                                            <span className="ml-2">{quest.title[language]}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Card>
+                <div className="mt-6 flex justify-end gap-4">
+                    <Button type="button" variant="outline" onClick={() => navigate('/admin/promocodes')}>Cancel</Button>
+                    <Button type="submit" disabled={isSaving}>{isSaving ? t('loading') : t('save_code')}</Button>
                 </div>
             </form>
         </div>

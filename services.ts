@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from "@google/genai";
-import { Quest, LocalGuideItem, QuestDifficulty, QuestionType, Review, Language, AuthUser, QuestStatus, InfoPage, HomePageContent } from './types';
+import { Quest, LocalGuideItem, QuestDifficulty, QuestionType, Review, Language, AuthUser, QuestStatus, InfoPage, HomePageContent, PromoCode } from './types';
 
 // --- AUDIO UTILS ---
 // FIX: Implement the decode function to convert base64 to Uint8Array.
@@ -282,6 +282,12 @@ let MOCK_HOME_PAGE_CONTENT: HomePageContent = {
     card2Description: { en: 'Unlock exciting, gamified tours to explore the city\'s secrets.', ru: 'Разблокируйте захватывающие игровые туры, чтобы исследовать секреты города.', ge: 'გახსენით საინტერესო, თამაშით სავსე ტურები ქალაქის საიდუმლოებების შესასწავლად.' },
 };
 
+let MOCK_PROMO_CODES: PromoCode[] = [
+    { id: 'promo-1', code: 'SUMMER2025', questIds: [], usageLimit: 100, currentUsage: 12, expirationDate: '2025-08-31' },
+    { id: 'promo-2', code: 'VIPACCESS', questIds: ['1'], usageLimit: 10, currentUsage: 10, expirationDate: '2024-12-31' },
+    { id: 'promo-3', code: 'FREEQUEST', questIds: ['2'], usageLimit: 0, currentUsage: 5, expirationDate: '2025-12-31' },
+];
+
 // --- NEW AUTH SERVICE ---
 export const authService = {
     getCurrentUser: (): AuthUser | null => {
@@ -506,6 +512,64 @@ export const api = {
           return true;
       }
       return false;
+  },
+  
+  // Payment and Promo Codes
+  getPromoCodes: async (): Promise<PromoCode[]> => {
+      await new Promise(res => setTimeout(res, 300));
+      return MOCK_PROMO_CODES;
+  },
+  createPromoCode: async (data: Omit<PromoCode, 'id' | 'currentUsage'>): Promise<PromoCode> => {
+      await new Promise(res => setTimeout(res, 500));
+      const newCode: PromoCode = { ...data, id: `promo-${Date.now()}`, currentUsage: 0 };
+      MOCK_PROMO_CODES.push(newCode);
+      return newCode;
+  },
+  updatePromoCode: async (id: string, data: PromoCode): Promise<PromoCode | undefined> => {
+      await new Promise(res => setTimeout(res, 500));
+      const index = MOCK_PROMO_CODES.findIndex(c => c.id === id);
+      if (index !== -1) {
+          MOCK_PROMO_CODES[index] = data;
+          return data;
+      }
+      return undefined;
+  },
+  deletePromoCode: async (id: string): Promise<boolean> => {
+      await new Promise(res => setTimeout(res, 500));
+      const initialLength = MOCK_PROMO_CODES.length;
+      MOCK_PROMO_CODES = MOCK_PROMO_CODES.filter(c => c.id !== id);
+      return MOCK_PROMO_CODES.length < initialLength;
+  },
+  applyPromoCode: async (code: string, questId: string): Promise<{ success: boolean; message: string; }> => {
+    await new Promise(res => setTimeout(res, 500));
+    const promo = MOCK_PROMO_CODES.find(c => c.code.toLowerCase() === code.toLowerCase());
+    if (!promo) return { success: false, message: 'Promo code not found.' };
+
+    const today = new Date();
+    const expiry = new Date(promo.expirationDate);
+    if (today > expiry) return { success: false, message: 'Promo code has expired.' };
+
+    if (promo.usageLimit > 0 && promo.currentUsage >= promo.usageLimit) {
+        return { success: false, message: 'Promo code has reached its usage limit.' };
+    }
+
+    if (promo.questIds.length > 0 && !promo.questIds.includes(questId)) {
+        return { success: false, message: 'Promo code is not valid for this quest.' };
+    }
+
+    promo.currentUsage++;
+    return { success: true, message: 'Promo code applied successfully!' };
+  },
+
+  processPayPalPayment: async (questId: string, userDetails: any): Promise<{ success: boolean; transactionId?: string; message: string }> => {
+    await new Promise(res => setTimeout(res, 2000));
+    console.log('Processing PayPal payment for quest:', questId, 'User:', userDetails);
+    // Simulate a 95% success rate
+    if (Math.random() > 0.05) {
+      return { success: true, transactionId: `PAYPAL-${Date.now()}`, message: "Payment successful" };
+    } else {
+      return { success: false, message: "Payment failed. Please try again." };
+    }
   }
 };
 

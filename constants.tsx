@@ -99,6 +99,12 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'email_address': 'Email Address',
     'messenger_contact': 'Telegram/WhatsApp (e.g., @username or phone)',
     'pay_now': 'Pay $9.99 Now',
+    'pay_with_paypal': 'Pay with PayPal',
+    'promo_code': 'Promo Code',
+    'have_promo_code': 'Have a promo code?',
+    'apply': 'Apply',
+    'promo_code_applied': 'Promo code applied! Enjoy your free access.',
+    'promo_code_invalid': 'Invalid or expired promo code.',
     
     // Auth & Registration
     'login_to_your_account': 'Login to your account',
@@ -188,6 +194,16 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'password_changed': 'Password changed successfully (mock).',
     'guide_name': 'Guide Name',
     'sub_category': 'Sub-category',
+    'manage_promo_codes': 'Manage Promo Codes',
+    'create_new_promo_code': 'Create New Promo Code',
+    'edit_promo_code': 'Edit Promo Code',
+    'code': 'Code',
+    'applicable_quests': 'Applicable Quest(s)',
+    'all_quests': 'All Quests',
+    'usage_limit': 'Usage Limit (0 for unlimited)',
+    'expiration_date': 'Expiration Date',
+    'current_usage': 'Usage',
+    'save_code': 'Save Code',
     
     // Guide Dashboard
     'guide_dashboard': 'Guide Dashboard',
@@ -297,6 +313,13 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'medical_clinics': 'Клиники',
     'pharmacy': 'Аптеки',
     'sub_category': 'Подкатегория',
+    'pay_with_paypal': 'Оплатить через PayPal',
+    'promo_code': 'Промокод',
+    'have_promo_code': 'У вас есть промокод?',
+    'apply': 'Применить',
+    'promo_code_applied': 'Промокод применен! Наслаждайтесь бесплатным доступом.',
+    'promo_code_invalid': 'Неверный или просроченный промокод.',
+    'manage_promo_codes': 'Управлять промокодами',
   },
   ge: {
     // This would be fully translated in a real app
@@ -382,6 +405,13 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'medical_clinics': 'კლინიკები',
     'pharmacy': 'აფთიაქები',
     'sub_category': 'ქვეკატეგორია',
+    'pay_with_paypal': 'გადაიხადეთ PayPal-ით',
+    'promo_code': 'პრომო კოდი',
+    'have_promo_code': 'გაქვთ პრომო კოდი?',
+    'apply': 'გამოყენება',
+    'promo_code_applied': 'პრომო კოდი გამოყენებულია! ისიამოვნეთ უფასო წვდომით.',
+    'promo_code_invalid': 'არასწორი ან ვადაგასული პრომო კოდი.',
+    'manage_promo_codes': 'პრომო კოდების მართვა',
   },
 };
 
