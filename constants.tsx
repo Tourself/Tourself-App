@@ -50,6 +50,10 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'sorted_closest': 'Sorted by Closest',
     'getting_location': 'Getting Location...',
     'location_error': 'Could not get location. Please enable it in browser settings.',
+    'banks_atms': 'Banks / ATMs',
+    'car_rentals': 'Car Rentals',
+    'medical_clinics': 'Medical Clinics',
+    'pharmacy': 'Pharmacy',
 
     // Quests
     'city_quests_title': 'Tbilisi City Quests',
@@ -183,6 +187,7 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'save_password': 'Save Password',
     'password_changed': 'Password changed successfully (mock).',
     'guide_name': 'Guide Name',
+    'sub_category': 'Sub-category',
     
     // Guide Dashboard
     'guide_dashboard': 'Guide Dashboard',
@@ -287,6 +292,11 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'post_answer_info': 'Информация после ответа',
     'share_result': 'Поделиться результатом',
     'correctly_answered': 'Вы правильно ответили на {correct} из {total} вопросов!',
+    'banks_atms': 'Банки / Банкоматы',
+    'car_rentals': 'Аренда авто',
+    'medical_clinics': 'Клиники',
+    'pharmacy': 'Аптеки',
+    'sub_category': 'Подкатегория',
   },
   ge: {
     // This would be fully translated in a real app
@@ -367,6 +377,11 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'post_answer_info': 'ინფორმაცია პასუხის შემდეგ',
     'share_result': 'შედეგის გაზიარება',
     'correctly_answered': 'თქვენ სწორად უპასუხეთ {correct} კითხვას {total}-დან!',
+    'banks_atms': 'ბანკები / ბანკომატები',
+    'car_rentals': 'მანქანის გაქირავება',
+    'medical_clinics': 'კლინიკები',
+    'pharmacy': 'აფთიაქები',
+    'sub_category': 'ქვეკატეგორია',
   },
 };
 

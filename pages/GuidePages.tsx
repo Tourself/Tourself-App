@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LocalGuideItem, Review } from '../types';
+import { LocalGuideItem, Review, ServiceSubCategory } from '../types';
 import { api, geminiService, calculateDistance } from '../services';
 import { useTranslations } from '../hooks';
 import { Header, Card, Button, Map, LoadingSpinner, Input, StarRating, ReviewList, ReviewForm, Modal, MapView, TTSButton } from '../components';
 import { Icons } from '../constants';
 
 type Category = 'all' | 'sites' | 'restaurants' | 'services';
+type SubCategory = 'all' | ServiceSubCategory;
 
 const stripHtml = (html: string) => {
     const tempDiv = document.createElement('div');
@@ -20,6 +21,7 @@ export const GuideListPage: React.FC = () => {
     const [items, setItems] = useState<LocalGuideItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<Category>('all');
+    const [subFilter, setSubFilter] = useState<SubCategory>('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
     const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -36,6 +38,11 @@ export const GuideListPage: React.FC = () => {
         };
         fetchItems();
     }, []);
+    
+    const handleSetFilter = (newFilter: Category) => {
+        setFilter(newFilter);
+        setSubFilter('all'); // Reset sub-filter when main category changes
+    }
 
     const handleSortByDistanceToggle = () => {
         if (isSortingByDistance) {
@@ -68,8 +75,12 @@ export const GuideListPage: React.FC = () => {
     
     const filteredItems = useMemo(() => {
         let sortedItems = items
-            .filter(item => filter === 'all' || item.category === filter)
-            .filter(item => item.title[language].toLowerCase().includes(searchTerm.toLowerCase()));
+            .filter(item => {
+                const categoryMatch = filter === 'all' || item.category === filter;
+                const subCategoryMatch = filter !== 'services' || subFilter === 'all' || item.subCategory === subFilter;
+                const searchMatch = item.title[language].toLowerCase().includes(searchTerm.toLowerCase());
+                return categoryMatch && subCategoryMatch && searchMatch;
+            });
 
         if (isSortingByDistance && userLocation) {
             sortedItems = [...sortedItems].sort((a, b) => {
@@ -80,13 +91,15 @@ export const GuideListPage: React.FC = () => {
         }
 
         return sortedItems;
-    }, [items, filter, searchTerm, language, isSortingByDistance, userLocation]);
+    }, [items, filter, subFilter, searchTerm, language, isSortingByDistance, userLocation]);
+    
+    const serviceSubCategories: ServiceSubCategory[] = ['banks_atms', 'car_rentals', 'medical_clinics', 'pharmacy'];
 
     return (
         <div className="min-h-screen bg-secondary">
             <Header title={t('local_guide_title')} showMenu />
-            <main className="p-4">
-                <div className="mb-4">
+            <main className="p-4 space-y-4">
+                <div>
                     <Input 
                         type="text"
                         placeholder={t('search_places')}
@@ -94,13 +107,13 @@ export const GuideListPage: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                <div className="flex justify-between items-center mb-4 gap-2 flex-wrap">
+                <div className="flex justify-between items-center gap-2 flex-wrap">
                     <div className="flex space-x-2 overflow-x-auto pb-2">
                         {(['all', 'sites', 'restaurants', 'services'] as Category[]).map(cat => (
                             <Button 
                                 key={cat}
                                 variant={filter === cat ? 'primary' : 'outline'}
-                                onClick={() => setFilter(cat)}
+                                onClick={() => handleSetFilter(cat)}
                                 className="flex-shrink-0"
                             >
                                 {t(cat)}
@@ -134,6 +147,24 @@ export const GuideListPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
+                
+                {filter === 'services' && (
+                     <div className="flex space-x-2 overflow-x-auto pb-2">
+                        <Button variant={subFilter === 'all' ? 'primary' : 'outline'} size="sm" onClick={() => setSubFilter('all')}>{t('all')}</Button>
+                        {serviceSubCategories.map(subCat => (
+                             <Button 
+                                key={subCat}
+                                variant={subFilter === subCat ? 'primary' : 'outline'}
+                                size="sm"
+                                onClick={() => setSubFilter(subCat)}
+                                className="flex-shrink-0"
+                            >
+                                {t(subCat)}
+                            </Button>
+                        ))}
+                     </div>
+                )}
+                
                 {locationError && <p className="text-red-500 text-sm my-2 text-center">{locationError}</p>}
 
 
@@ -158,7 +189,7 @@ export const GuideListPage: React.FC = () => {
                         </div>
                     ) : (
                         <Card>
-                            <MapView items={filteredItems} onMarkerClick={(id) => navigate(`/guide/${id}`)} />
+                            <MapView items={filteredItems} language={language} />
                         </Card>
                     )
                 )}

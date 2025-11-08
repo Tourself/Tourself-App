@@ -16,9 +16,12 @@ export interface Review {
   isApproved: boolean;
 }
 
+export type ServiceSubCategory = 'banks_atms' | 'car_rentals' | 'medical_clinics' | 'pharmacy';
+
 export interface LocalGuideItem {
   id: string;
   category: 'sites' | 'restaurants' | 'services';
+  subCategory?: ServiceSubCategory;
   title: MultilingualString;
   description: MultilingualString;
   address: MultilingualString;

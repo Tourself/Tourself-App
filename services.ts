@@ -50,92 +50,179 @@ const MOCK_REVIEWS: Review[] = [
 ];
 // FIX: Added mock data for guide items.
 let MOCK_GUIDE_ITEMS: LocalGuideItem[] = [
-    { id: 'g1', category: 'sites', title: { en: 'Narikala Fortress', ru: 'Крепость Нарикала', ge: 'ნარიყალას ციხე' }, description: { en: 'An ancient fortress overlooking Tbilisi.', ru: 'Древняя крепость с видом на Тбилиси.', ge: 'უძველესი ციხესიმაგრე, რომელიც თბილისს გადაჰყურებს.' }, address: { en: 'Tbilisi, Georgia', ru: 'Тбилиси, Грузия', ge: 'თბილისი, საქართველო' }, contact: 'N/A', coords: { lat: 41.6879, lng: 44.8075 }, image: 'https://picsum.photos/seed/narikala/800/600' },
-    { id: 'g2', category: 'restaurants', title: { en: 'Sakhli #11', ru: 'Сахли #11', ge: 'სახლი #11' }, description: { en: 'Cozy restaurant with traditional Georgian cuisine.', ru: 'Уютный ресторан с традиционной грузинской кухней.', ge: 'მყუდრო რესტორანი ტრადიციული ქართული სამზარეულოთი.' }, address: { en: '11 Galaktion Tabidze St', ru: 'ул. Галактиона Табидзе, 11', ge: 'გალაკტიონ ტაბიძის ქ. 11' }, contact: '+995 322 92 03 50', coords: { lat: 41.6918, lng: 44.8035 }, image: 'https://picsum.photos/seed/sakhli/800/600' },
-    { 
-      id: 'g3', 
-      category: 'sites', 
-      title: { 
-        en: 'Abanotubani - Sulphur Baths', 
-        ru: 'Абанотубани - Серные бани', 
-        ge: 'აბანოთუბანი - გოგირდის აბანოები' 
-      }, 
-      description: { 
-        en: `
-### Introduction
-Nestled in the heart of Old Tbilisi, the Abanotubani district is home to the city's famous Sulphur Baths. These historic, dome-roofed bathhouses are built on top of natural hot springs and are an unmissable part of the Tbilisi experience, offering relaxation, health benefits, and a deep connection to the city's origins.
-
-### Meaning and History
-According to legend, the city of Tbilisi was founded because of these very springs. In the 5th century, King Vakhtang Gorgasali was hunting when his falcon fell into a hot spring and was boiled. Impressed by the discovery, he ordered a city to be built here, naming it "Tbilisi," which derives from the Georgian word "tbili," meaning "warm." For centuries, these baths were not just for hygiene but were central social hubs for citizens.
-
-### Health Benefits of Sulphur Waters
-The naturally hot (38-40°C) water is rich in sulphur and other minerals, believed to have numerous therapeutic properties:
-- **Skin Conditions:** Helps with issues like eczema and acne.
-- **Joint Pain:** Soothes arthritis and rheumatism.
-- **Relaxation:** Relieves stress and improves sleep.
-- **Detoxification:** The heat and minerals help to cleanse the body.
-
-### Planning Your Visit
-**Choosing Your Bathhouse:** There are several bathhouses, each with its own character. Some popular options include the ornate Orbeliani Baths, Gulo's Thermal Spa, and Bathhouse No. 5.
-**Types of Rooms and Pricing:** You can choose a public bath (gender-separated, very affordable) or book a private room. Private rooms vary in size and luxury, with prices ranging from ~50 GEL to over 200 GEL per hour. It's best to book in advance, especially for private rooms on weekends.
-**Additional Services:** The most traditional experience is to get a *kisi* scrub. This is an intense exfoliation done by a *mekise* (scrubber) that leaves your skin incredibly smooth. Massages are also available.
-**What to Bring:** A swimsuit (though many go nude in private rooms), flip-flops, and a towel. Most items can be rented on-site for a small fee. It's wise to leave valuable jewelry at your accommodation.
-**Etiquette and Tips:** Hydrate well before and after. Don't stay in the hot water for too long at a time. Be prepared for the distinct smell of sulphur—it's all part of the authentic experience!
-**Getting There:** The Abanotubani district is located below Narikala Fortress and is easily accessible on foot from anywhere in the Old Town.
-        `, 
-        ru: `
-### Введение
-Район Абанотубани, расположенный в самом сердце Старого Тбилиси, является домом для знаменитых серных бань города. Эти исторические бани с купольными крышами построены на естественных горячих источниках и представляют собой неотъемлемую часть тбилисского опыта, предлагая расслабление, пользу для здоровья и глубокую связь с истоками города.
-
-### Значение и история
-Согласно легенде, город Тбилиси был основан именно благодаря этим источникам. В V веке царь Вахтанг Горгасали охотился, когда его сокол упал в горячий источник и сварился. Впечатленный этим открытием, он приказал построить здесь город и назвал его «Тбилиси», что происходит от грузинского слова «тбили», означающего «теплый». На протяжении веков эти бани были не просто местом для гигиены, но и центральными социальными узлами для горожан.
-
-### Польза серных вод для здоровья
-Естественно горячая (38-40°C) вода богата серой и другими минералами, которые, как считается, обладают многочисленными лечебными свойствами:
-- **Кожные заболевания:** Помогает при таких проблемах, как экзема и акне.
-- **Боль в суставах:** Облегчает состояние при артрите и ревматизме.
-- **Расслабление:** Снимает стресс и улучшает сон.
-- **Детоксикация:** Тепло и минералы помогают очистить организм.
-
-### Планирование вашего визита
-**Выбор бани:** Есть несколько бань, каждая со своим характером. Популярные варианты включают богато украшенные Орбелиановские бани, Gulo's Thermal Spa и Баню № 5.
-**Типы комнат и цены:** Вы можете выбрать общественную баню (раздельные для мужчин и женщин, очень доступные) или забронировать отдельную комнату. Частные комнаты различаются по размеру и роскоши, цены варьируются от ~50 лари до более 200 лари в час. Лучше бронировать заранее, особенно частные комнаты на выходные.
-**Дополнительные услуги:** Самый традиционный опыт — это пилинг *киси*. Это интенсивное отшелушивание, которое делает *мекисе* (банщик), оставляя вашу кожу невероятно гладкой. Также доступны массажи.
-**Что взять с собой:** Купальник (хотя в частных комнатах многие обходятся без него), шлепанцы и полотенце. Большинство вещей можно арендовать на месте за небольшую плату. Ценные украшения лучше оставить в гостинице.
-**Этикет и советы:** Пейте много воды до и после. Не оставайтесь в горячей воде слишком долго за один раз. Будьте готовы к характерному запаху серы — это часть аутентичного опыта!
-**Как добраться:** Район Абанотубани расположен у подножия крепости Нарикала, и до него легко дойти пешком из любой точки Старого города.
-        `, 
-        ge: `
-### შესავალი
-ძველი თბილისის გულში მდებარე აბანოთუბნის უბანი ქალაქის ცნობილი გოგირდის აბანოების სახლია. ეს ისტორიული, გუმბათოვანი აბანოები ბუნებრივ ცხელ წყაროებზეა აგებული და თბილისური გამოცდილების განუყოფელი ნაწილია, რომელიც გთავაზობთ რელაქსაციას, ჯანმრთელობის სარგებელსა და ქალაქის წარმოშობასთან ღრმა კავშირს.
-
-### მნიშვნელობა და ისტორია
-ლეგენდის თანახმად, ქალაქი თბილისი სწორედ ამ წყაროების გამო დაარსდა. V საუკუნეში მეფე ვახტანგ გორგასალი ნადირობისას მისი შევარდენი ცხელ წყაროში ჩავარდა და მოიხარშა. ამ აღმოჩენით მოხიბლულმა მეფემ ბრძანა აქ ქალაქის აშენება და უწოდა მას "თბილისი", რაც მომდინარეობს ქართული სიტყვიდან "თბილი". საუკუნეების განმავლობაში ეს აბანოები არა მხოლოდ ჰიგიენისთვის, არამედ მოქალაქეების მთავარი სოციალური თავშეყრის ადგილი იყო.
-
-### გოგირდის წყლების ჯანმრთელობის სარგებელი
-ბუნებრივად ცხელი (38-40°C) წყალი მდიდარია გოგირდითა და სხვა მინერალებით, რომლებსაც მრავალი თერაპიული თვისება მიეწერება:
-- **კანის დაავადებები:** ეხმარება ეგზემისა და აკნეს მსგავს პრობლემებს.
-- **სახსრების ტკივილი:** ამსუბუქებს ართრიტსა და რევმატიზმს.
-- **რელაქსაცია:** ხსნის სტრესს და აუმჯობესებს ძილს.
-- **დეტოქსიკაცია:** სითბო და მინერალები ორგანიზმის გაწმენდას უწყობს ხელს.
-
-### ვიზიტის დაგეგმვა
-**აბანოს არჩევა:** არსებობს რამდენიმე აბანო, თითოეულს თავისი ხასიათი აქვს. პოპულარული ვარიანტებია მდიდრულად მორთული ორბელიანის აბანო, გულოს თერმული სპა და აბანო №5.
-**ოთახების ტიპები და ფასები:** შეგიძლიათ აირჩიოთ საზოგადოებრივი აბანო (სქესის მიხედვით გამოყოფილი, ძალიან ხელმისაწვდომი) ან დაჯავშნოთ კერძო ოთახი. კერძო ოთახები განსხვავდება ზომითა და ფუფუნებით, ფასები მერყეობს ~50 ლარიდან 200 ლარზე მეტამდე საათში. უმჯობესია წინასწარ დაჯავშნა, განსაკუთრებით შაბათ-კვირას.
-**დამატებითი სერვისები:** ყველაზე ტრადიციული გამოცდილებაა *ქისის* გაკეთება. ეს არის ინტენსიური პილინგი, რომელსაც *მექისე* აკეთებს და კანს საოცრად გლუვს ხდის. ასევე ხელმისაწვდომია მასაჟები.
-**რა წამოვიღოთ:** საცურაო კოსტიუმი (თუმცა კერძო ოთახებში ბევრი მის გარეშე შედის), ჩუსტები და პირსახოცი. ნივთების უმეტესობის ქირაობა ადგილზე მცირე საფასურად შეგიძლიათ. ძვირფასი სამკაულები უმჯობესია საცხოვრებელში დატოვოთ.
-**ეტიკეტი და რჩევები:** დალიეთ ბევრი წყალი ვიზიტამდე და შემდეგ. დიდხანს ნუ გაჩერდებით ცხელ წყალში. მოემზადეთ გოგირდის სპეციფიკური სუნისთვის — ეს ავთენტური გამოცდილების ნაწილია!
-**როგორ მივიდეთ:** აბანოთუბნის უბანი ნარიყალას ციხის ქვემოთ მდებარეობს და ძველი ქალაქის ნებისმიერი წერტილიდან ფეხით ადვილად მისადგომია.
-        `
-      }, 
-      address: { 
-        en: 'Abanotubani District, Tbilisi', 
-        ru: 'Район Абанотубани, Тбилиси', 
-        ge: 'აბანოთუბნის უბანი, თბილისი' 
-      }, 
-      contact: 'Varies by bathhouse', 
-      coords: { lat: 41.6888, lng: 44.8105 }, 
-      image: 'https://picsum.photos/seed/abanotubani/800/600' 
+    {
+      id: "site-narikala",
+      category: "sites",
+      title: { en: "Narikala Fortress", ru: "Крепость Нарикала", ge: "ნარიყალას ციხე" },
+      description: {
+        en: "### Description\nAn ancient fortress overlooking Tbilisi and the Mtkvari River. Narikala consists of two walled sections on a steep hill between the Sulphur Baths and the Botanical Gardens. It's a must-visit for panoramic city views and a touch of history.\n\n### History & Meaning\nEstablished in the 4th century as a Persian citadel, the fortress was expanded over the centuries by various rulers. Most of the existing fortifications date from the 16th and 17th centuries. Its name, meaning 'Little Fortress,' was given by the Mongols. It stands as a powerful symbol of Tbilisi's resilience and long history.\n\n### Interesting Facts\n*   The St. Nicholas church inside the fortress was rebuilt in 1996, replacing the original 13th-century church destroyed by fire.\n*   You can reach the fortress via an aerial tramway (cable car) from Rike Park, offering stunning views on the way up.\n*   The fortress walls offer one of the best vantage points for photographing the entire city.\n\n### Tourist Tips\n*   Wear comfortable shoes as the paths can be steep and uneven.\n*   The best time to visit is late afternoon for golden hour photography, staying until after sunset to see the city lights.\n*   The cable car is the easiest way up, but you can also walk up from the Meidan Bazaar area.\n*   Entrance to the fortress grounds is free.",
+        ru: "### Описание\nДревняя крепость с видом на Тбилиси и реку Мтквари. Нарикала состоит из двух обнесенных стенами секций на крутом холме между серными банями и ботаническим садом. Это обязательное место для посещения ради панорамных видов на город и прикосновения к истории.\n\n### История и значение\nОснованная в IV веке как персидская цитадель, крепость расширялась веками различными правителями. Большинство существующих укреплений датируются XVI и XVII веками. Ее название, означающее «Маленькая крепость», было дано монголами. Она является мощным символом стойкости и долгой истории Тбилиси.\n\n### Интересные факты\n*   Церковь Святого Николая внутри крепости была восстановлена в 1996 году, заменив оригинальную церковь XIII века, уничтоженную пожаром.\n*   До крепости можно добраться на канатной дороге из парка Рике, откуда открываются потрясающие виды.\n*   Со стен крепости открывается одна из лучших точек для фотографирования всего города.\n\n### Советы туристам\n*   Наденьте удобную обувь, так как тропы могут быть крутыми и неровными.\n*   Лучшее время для посещения — поздний вечер, чтобы сделать фотографии в «золотой час» и остаться после заката, чтобы увидеть огни города.\n*   Канатная дорога — самый простой способ подняться, но можно также подняться пешком от района Мейдан Базара.\n*   Вход на территорию крепости бесплатный.",
+        ge: "### აღწერა\nუძველესი ციხესიმაგრე, რომელიც გადაჰყურებს თბილისს და მდინარე მტკვარს. ნარიყალა შედგება ორი გალავნიანი ნაწილისგან ციცაბო ბორცვზე გოგირდის აბანოებსა და ბოტანიკურ ბაღს შორის. ეს არის აუცილებლად სანახავი ადგილი ქალაქის პანორამული ხედებისა და ისტორიასთან შეხებისთვის.\n\n### ისტორია და მნიშვნელობა\nდაარსდა IV საუკუნეში, როგორც სპარსული ციტადელი, ციხე საუკუნეების განმავლობაში ფართოვდებოდა სხვადასხვა მმართველების მიერ. არსებული გამაგრებების უმეტესობა XVI და XVII საუკუნეებით თარიღდება. მისი სახელი, რაც „პატარა ციხეს“ ნიშნავს, მონღოლებმა დაარქვეს. ის თბილისის გამძლეობისა და ხანგრძლივი ისტორიის მძლავრი სიმბოლოა.\n\n### საინტერესო ფაქტები\n*   წმინდა ნიკოლოზის ეკლესია ციხის შიგნით 1996 წელს აღადგინეს, რომელმაც ჩაანაცვლა XIII საუკუნის ხანძრის შედეგად განადგურებული ორიგინალური ეკლესია.\n*   ციხემდე მისვლა შესაძლებელია საბაგიროთი რიყის პარკიდან, რომელიც ასვლისას შესანიშნავ ხედებს გთავაზობთ.\n*   ციხის კედლებიდან იშლება ერთ-ერთი საუკეთესო ხედი მთელი ქალაქის გადასაღებად.\n\n### რჩევები ტურისტებს\n*   ატარეთ კომფორტული ფეხსაცმელი, რადგან ბილიკები შეიძლება იყოს ციცაბო და არათანაბარი.\n*   სტუმრობისთვის საუკეთესო დროა გვიანი შუადღე ოქროს საათის ფოტოგრაფიისთვის, მზის ჩასვლის შემდეგ კი ქალაქის განათების სანახავად.\n*   საბაგირო ასვლის უმარტივესი გზაა, მაგრამ ასევე შეგიძლიათ ფეხით ასვლა მეიდნის ბაზრის ტერიტორიიდან.\n*   ციხის ტერიტორიაზე შესვლა უფასოა."
+      },
+      address: { en: "Tbilisi, Georgia", ru: "Тбилиси, Грузия", ge: "თბილისი, საქართველო" },
+      contact: "N/A",
+      coords: { lat: 41.6879, lng: 44.8075 },
+      image: "https://picsum.photos/seed/narikala-fortress/800/600",
+    },
+    {
+      id: "site-metekhi",
+      category: "sites",
+      title: { en: "Metekhi Church", ru: "Церковь Метехи", ge: "მეტეხის ეკლესია" },
+      description: {
+        en: "### Description\nPerched on a cliff overlooking the Mtkvari River, Metekhi Church is an iconic sight in Old Tbilisi. Alongside the church stands a commanding equestrian statue of King Vakhtang Gorgasali, the city's founder. It offers a postcard-perfect view of Narikala Fortress and the old city.\n\n### History & Meaning\nKing Vakhtang Gorgasali built the first church and fort on this site in the 5th century. The current church dates to the 13th century but has been destroyed and rebuilt numerous times. For centuries, it was a royal chapel and later served as a Russian military barracks and even a theatre during the Soviet era, before being reconsecrated in 1988.\n\n### Interesting Facts\n*   The name 'Metekhi' refers to the area around the church, meaning 'the neighborhood of the palace.'\n*   It is believed to be the burial place of Saint Shushanik, one of Georgia's most revered martyrs.\n*   The statue of King Vakhtang Gorgasali was erected in 1961.\n\n### Tourist Tips\n*   The church is an active place of worship, so dress modestly (cover shoulders and knees).\n*   The platform in front of the church provides one of the best photo opportunities in Tbilisi.\n*   It's easily accessible on foot from the Meidan area or Avlabari metro station.\n*   Entry is free.",
+        ru: "### Описание\nРасположенная на скале с видом на реку Мтквари, церковь Метехи является знаковым местом Старого Тбилиси. Рядом с церковью стоит величественная конная статуя царя Вахтанга Горгасали, основателя города. Отсюда открывается открыточный вид на крепость Нарикала и старый город.\n\n### История и значение\nЦарь Вахтанг Горгасали построил первую церковь и крепость на этом месте в V веке. Нынешняя церковь датируется XIII веком, но много раз разрушалась и восстанавливалась. Веками она была королевской часовней, а позже служила русской военной казармой и даже театром в советское время, прежде чем была вновь освящена в 1988 году.\n\n### Интересные факты\n*   Название «Метехи» относится к району вокруг церкви и означает «окрестности дворца».\n*   Считается, что здесь похоронена святая Шушаник, одна из самых почитаемых мучениц Грузии.\n*   Статуя царя Вахтанга Горгасали была установлена в 1961 году.\n\n### Советы туристам\n*   Церковь является действующим местом поклонения, поэтому одевайтесь скромно (прикрывайте плечи и колени).\n*   Площадка перед церковью предоставляет одну из лучших возможностей для фото в Тбилиси.\n*   До нее легко добраться пешком от района Мейдан или станции метро «Авлабари».\n*   Вход бесплатный.",
+        ge: "### აღწერა\nმტკვრის პირას, კლდეზე აღმართული მეტეხის ეკლესია ძველი თბილისის ერთ-ერთი სიმბოლოა. ეკლესიის გვერდით დგას ქალაქის დამაარსებლის, მეფე ვახტანგ გორგასლის შთამბეჭდავი ცხენოსანი ძეგლი. აქედან იშლება ულამაზესი ხედი ნარიყალას ციხეზე და ძველ ქალაქზე.\n\n### ისტორია და მნიშვნელობა\nპირველი ეკლესია და ციხე ამ ადგილას მეფე ვახტანგ გორგასალმა V საუკუნეში ააგო. დღევანდელი ეკლესია XIII საუკუნით თარიღდება, მაგრამ მრავალჯერ დაინგრა და აღდგა. საუკუნეების განმავლობაში ის სამეფო სამლოცველო იყო, მოგვიანებით კი რუსულ სამხედრო ყაზარმად და საბჭოთა პერიოდში თეატრადაც კი გამოიყენებოდა, სანამ 1988 წელს ხელახლა აკურთხებდნენ.\n\n### საინტერესო ფაქტები\n*   სახელი „მეტეხი“ აღნიშნავს ეკლესიის მიმდებარე ტერიტორიას და ნიშნავს „სასახლის უბანს“.\n*   ითვლება, რომ აქ არის დაკრძალული წმინდა შუშანიკი, საქართველოს ერთ-ერთი ყველაზე პატივცემული მოწამე.\n*   ვახტანგ გორგასლის ძეგლი 1961 წელს დაიდგა.\n\n### რჩევები ტურისტებს\n*   ეკლესია მოქმედია, ამიტომ ჩაიცვით მოკრძალებულად (დაიფარეთ მხრები და მუხლები).\n*   ეკლესიის წინ მდებარე პლატფორმა თბილისში ერთ-ერთ საუკეთესო ფოტოგადაღების შესაძლებლობას იძლევა.\n*   ადვილად მისადგომია ფეხით მეიდნიდან ან მეტროსადგურ „ავლაბრიდან“.\n*   შესვლა უფასოა."
+      },
+      address: { en: "Metekhi St, Tbilisi", ru: "Улица Метехи, Тбилиси", ge: "მეტეხის ქ, თბილისი" },
+      contact: "N/A",
+      coords: { lat: 41.6908, lng: 44.8099 },
+      image: "https://picsum.photos/seed/metekhi-church/800/600",
+    },
+    {
+      id: "site-abanotubani",
+      category: "sites",
+      title: { en: "Abanotubani - Sulphur Baths", ru: "Абанотубани - Серные бани", ge: "აბანოთუბანი - გოგირდის აბანოები" },
+      description: {
+        en: "### Description\nNestled in the heart of Old Tbilisi, the Abanotubani district is home to the city's famous Sulphur Baths. These historic, dome-roofed bathhouses are built on top of natural hot springs and are an unmissable part of the Tbilisi experience, offering relaxation and health benefits.\n\n### History & Meaning\nAccording to legend, the city of Tbilisi was founded because of these very springs. In the 5th century, King Vakhtang Gorgasali's falcon fell into a hot spring, and impressed by this, he ordered a city to be built here, naming it 'Tbilisi' (from 'tbili,' meaning warm). For centuries, these baths were central social hubs.\n\n### Interesting Facts\n*   The naturally hot (38-40°C) water is rich in sulphur and other minerals, believed to have numerous therapeutic properties.\n*   Famous visitors to the baths include Alexander Pushkin and Alexandre Dumas.\n*   The most ornate bathhouse, the Orbeliani Baths, has a facade resembling a Persian madrasah.\n\n### Tourist Tips\n*   You can book a public bath or a private room. Private rooms are recommended and should be booked in advance.\n*   Don't miss the traditional 'kisi' scrub for an intense exfoliation experience.\n*   Bring flip-flops and a towel, though they can be rented.\n*   Be prepared for the distinct smell of sulphur!",
+        ru: "### Описание\nРайон Абанотубани, расположенный в самом сердце Старого Тбилиси, является домом для знаменитых серных бань города. Эти исторические бани с купольными крышами построены на естественных горячих источниках и представляют собой неотъемлемую часть тбилисского опыта, предлагая расслабление и пользу для здоровья.\n\n### История и значение\nСогласно легенде, город Тбилиси был основан именно благодаря этим источникам. В V веке сокол царя Вахтанга Горгасали упал в горячий источник, и, впечатленный этим, царь приказал построить здесь город, назвав его «Тбилиси» (от «тбили», что означает «теплый»). На протяжении веков эти бани были центральными социальными узлами.\n\n### Интересные факты\n*   Естественно горячая (38-40°C) вода богата серой и другими минералами, которые, как считается, обладают многочисленными лечебными свойствами.\n*   Среди знаменитых посетителей бань были Александр Пушкин и Александр Дюма.\n*   Самая богато украшенная баня, Орбелиановская, имеет фасад, напоминающий персидское медресе.\n\n### Советы туристам\n*   Вы можете забронировать общественную баню или отдельную комнату. Рекомендуются частные комнаты, которые следует бронировать заранее.\n*   Не пропустите традиционный пилинг «киси» для интенсивного отшелушивания.\n*   Возьмите с собой шлепанцы и полотенце, хотя их можно арендовать.\n*   Будьте готовы к характерному запаху серы!",
+        ge: "### აღწერა\nძველი თბილისის გულში მდებარე აბანოთუბნის უბანი ქალაქის ცნობილი გოგირდის აბანოების სახლია. ეს ისტორიული, გუმბათოვანი აბანოები ბუნებრივ ცხელ წყაროებზეა აგებული და თბილისური გამოცდილების განუყოფელი ნაწილია, რომელიც გთავაზობთ რელაქსაციას და ჯანმრთელობის სარგებელს.\n\n### ისტორია და მნიშვნელობა\nლეგენდის თანახმად, ქალაქი თბილისი სწორედ ამ წყაროების გამო დაარსდა. V საუკუნეში მეფე ვახტანგ გორგასლის შევარდენი ცხელ წყაროში ჩავარდა და ამით მოხიბლულმა მეფემ ბრძანა აქ ქალაქის აშენება და უწოდა მას „თბილისი“ (სიტყვიდან „თბილი“). საუკუნეების განმავლობაში ეს აბანოები მთავარი სოციალური თავშეყრის ადგილი იყო.\n\n### საინტერესო ფაქტები\n*   ბუნებრივად ცხელი (38-40°C) წყალი მდიდარია გოგირდითა და სხვა მინერალებით, რომლებსაც მრავალი თერაპიული თვისება მიეწერება.\n*   აბანოების ცნობილ სტუმრებს შორის იყვნენ ალექსანდრე პუშკინი და ალექსანდრე დიუმა.\n*   ყველაზე მდიდრულად მორთულ ორბელიანის აბანოს ფასადი სპარსულ მედრესეს მოგაგონებთ.\n\n### რჩევები ტურისტებს\n*   შეგიძლიათ დაჯავშნოთ საზოგადოებრივი აბანო ან კერძო ოთახი. რეკომენდებულია კერძო ოთახები, რომლებიც წინასწარ უნდა დაჯავშნოთ.\n*   არ გამოტოვოთ ტრადიციული „ქისის“ პროცედურა ინტენსიური პილინგისთვის.\n*   წამოიღეთ ჩუსტები და პირსახოცი, თუმცა მათი ქირაობაც შესაძლებელია.\n*   მოემზადეთ გოგირდის სპეციფიკური სუნისთვის!"
+      },
+      address: { en: "Abanotubani District, Tbilisi", ru: "Район Абанотубани, Тбилиси", ge: "აბანოთუბნის უბანი, თბილისი" },
+      contact: "Varies by bathhouse",
+      coords: { lat: 41.6888, lng: 44.8105 },
+      image: "https://picsum.photos/seed/abanotubani/800/600",
+    },
+    {
+        id: "site-botanical-garden",
+        category: "sites",
+        title: { en: "Tbilisi Botanical Garden", ru: "Тбилисский ботанический сад", ge: "თბილისის ბოტანიკური ბაღი" },
+        description: {
+          en: "### Description\nA vast green oasis nestled in the Tsavkisis-Tskali Gorge, right behind Narikala Fortress. Spanning 161 hectares, it boasts a diverse collection of flora from around the world. It's a perfect escape from the city bustle, with shady paths, waterfalls, and scenic picnic spots.\n\n### History & Meaning\nThe garden's history spans more than three centuries. It was first described in 1671 as the 'royal gardens' and was officially established as the Tiflis Botanical Garden in 1845. It has served as a major center for botanical research and conservation in the Caucasus region.\n\n### Interesting Facts\n*   The garden is home to over 4,500 different plant species.\n*   There are several picturesque bridges and a lovely waterfall within the garden grounds.\n*   It contains a unique collection of Caucasian plants, many of which are rare or endangered.\n\n### Tourist Tips\n*   There is a small entrance fee (around 4 GEL).\n*   Wear comfortable walking shoes, as the terrain is hilly and expansive.\n*   Plan at least 2-3 hours to explore a good portion of the garden.\n*   The main entrance is at the foot of Narikala Fortress, but there's another near the Sololaki district.",
+          ru: "### Описание\nОбширный зеленый оазис, расположенный в ущелье Цавкисис-Цкали, прямо за крепостью Нарикала. Занимая 161 гектар, он может похвастаться разнообразной коллекцией флоры со всего мира. Это идеальное место для отдыха от городской суеты с тенистыми тропами, водопадами и живописными местами для пикника.\n\n### История и значение\nИстория сада насчитывает более трех столетий. Впервые он был описан в 1671 году как «королевские сады» и был официально учрежден как Тифлисский ботанический сад в 1845 году. Он служил крупным центром ботанических исследований и охраны природы на Кавказе.\n\n### Интересные факты\n*   В саду произрастает более 4500 различных видов растений.\n*   На территории сада есть несколько живописных мостов и прекрасный водопад.\n*   Здесь собрана уникальная коллекция кавказских растений, многие из которых являются редкими или находятся под угрозой исчезновения.\n\n### Советы туристам\n*   Вход платный (около 4 лари).\n*   Наденьте удобную обувь для ходьбы, так как местность холмистая и обширная.\n*   Запланируйте не менее 2-3 часов, чтобы осмотреть значительную часть сада.\n*   Главный вход находится у подножия крепости Нарикала, но есть и другой вход, рядом с районом Сололаки.",
+          ge: "### აღწერა\nვრცელი მწვანე ოაზისი, რომელიც მდებარეობს წავკისისწყლის ხეობაში, პირდაპირ ნარიყალას ციხის უკან. 161 ჰექტარზე გადაჭიმული, ის ამაყობს მსოფლიოს სხვადასხვა კუთხიდან ჩამოტანილი ფლორის მრავალფეროვანი კოლექციით. ეს არის შესანიშნავი ადგილი ქალაქის ხმაურისგან თავის დასაღწევად, ჩრდილიანი ბილიკებით, ჩანჩქერებითა და პიკნიკისთვის განკუთვნილი ლამაზი ადგილებით.\n\n### ისტორია და მნიშვნელობა\nბაღის ისტორია სამ საუკუნეზე მეტს ითვლის. ის პირველად 1671 წელს აღიწერა, როგორც „სამეფო ბაღები“ და ოფიციალურად, როგორც თბილისის ბოტანიკური ბაღი, 1845 წელს დაარსდა. ის კავკასიის რეგიონში ბოტანიკური კვლევისა და კონსერვაციის მთავარ ცენტრს წარმოადგენდა.\n\n### საინტერესო ფაქტები\n*   ბაღში 4500-ზე მეტი სხვადასხვა სახეობის მცენარეა.\n*   ბაღის ტერიტორიაზე რამდენიმე ლამაზი ხიდი და მშვენიერი ჩანჩქერია.\n*   ის შეიცავს კავკასიური მცენარეების უნიკალურ კოლექციას, რომელთაგან ბევრი იშვიათი ან გადაშენების პირას მყოფია.\n\n### რჩევები ტურისტებს\n*   შესვლა ფასიანია (დაახლოებით 4 ლარი).\n*   ჩაიცვით კომფორტული ფეხსაცმელი, რადგან რელიეფი გორაკიანი და ვრცელია.\n*   დაგეგმეთ მინიმუმ 2-3 საათი ბაღის მნიშვნელოვანი ნაწილის დასათვალიერებლად.\n*   მთავარი შესასვლელი ნარიყალას ციხის ძირშია, მაგრამ არის სხვა შესასვლელიც სოლოლაკის უბანთან ახლოს."
+        },
+        address: { en: "1 Botanikuri St, Tbilisi", ru: "Улица Ботаникури 1, Тбилиси", ge: "ბოტანიკურის ქ. 1, თბილისი" },
+        contact: "+995 322 72 34 37",
+        coords: { lat: 41.6875, lng: 44.8093 },
+        image: "https://picsum.photos/seed/botanical-garden/800/600",
+      },
+      {
+        id: "site-betlemi-stairs",
+        category: "sites",
+        title: { en: "Betlemi Street Stairs & Ascent", ru: "Лестница и подъем на улице Бетлеми", ge: "ბეთლემის ქუჩის კიბე და აღმართი" },
+        description: {
+          en: "### Description\nA charming and picturesque ascent in the heart of Old Sololaki, leading up towards Narikala Fortress. The area is filled with classic Tbilisi architecture: old houses with intricate wooden balconies, vine-covered walls, and hidden courtyards. It's a photographer's dream and a quiet path to explore.\n\n### History & Meaning\nThis area represents the authentic Old Tbilisi, with its winding, narrow streets and historic residential buildings. The Betlemi Stairs lead to the Upper and Lower Betlemi Churches, some of the oldest in the city. The ascent has long been a route for both residents and pilgrims heading up the holy mountain.\n\n### Interesting Facts\n*   The area is home to the Ateshgah of Tbilisi, an ancient Zoroastrian fire temple.\n*   Many of the buildings feature a unique mix of Georgian, European, and Middle Eastern architectural styles.\n*   Exploring the side alleys off the main stairs often leads to unexpected and beautiful views.\n\n### Tourist Tips\n*   Wear sturdy footwear as the stairs and cobbled streets are steep.\n*   This is a much more scenic and peaceful route to Narikala than the main road.\n*   The area is beautiful both day and night, offering different atmospheres.\n*   Respect the residents as you are walking through a residential neighborhood.",
+          ru: "### Описание\nОчаровательный и живописный подъем в самом сердце старого Сололаки, ведущий к крепости Нарикала. Район полон классической тбилисской архитектуры: старые дома с искусными деревянными балконами, увитые виноградом стены и скрытые дворики. Это мечта фотографа и тихий путь для исследования.\n\n### История и значение\nЭтот район представляет собой аутентичный Старый Тбилиси с его извилистыми, узкими улочками и историческими жилыми домами. Лестница Бетлеми ведет к Верхней и Нижней церквям Бетлеми, одним из старейших в городе. Подъем долгое время был маршрутом как для жителей, так и для паломников, направляющихся на святую гору.\n\n### Интересные факты\n*   В этом районе находится Атешга, древний зороастрийский храм огня.\n*   Многие здания отличаются уникальным сочетанием грузинского, европейского и ближневосточного архитектурных стилей.\n*   Исследование боковых переулков от основной лестницы часто приводит к неожиданным и красивым видам.\n\n### Советы туристам\n*   Наденьте прочную обувь, так как лестницы и мощеные улицы крутые.\n*   Это гораздо более живописный и спокойный маршрут к Нарикале, чем главная дорога.\n*   Район красив как днем, так и ночью, предлагая разную атмосферу.\n*   Уважайте жителей, так как вы идете через жилой район.",
+          ge: "### აღწერა\nმომხიბლავი და თვალწარმტაცი აღმართი ძველი სოლოლაკის გულში, რომელიც ნარიყალას ციხისკენ მიემართება. ტერიტორია სავსეა კლასიკური თბილისური არქიტექტურით: ძველი სახლები რთული ხის აივნებით, ვაზით დაფარული კედლებითა და ფარული ეზოებით. ეს ფოტოგრაფის ოცნება და წყნარი, აღმოსაჩენი ბილიკია.\n\n### ისტორია და მნიშვნელობა\nეს ტერიტორია წარმოადგენს ავთენტურ ძველ თბილისს თავისი მიხვეულ-მოხვეული, ვიწრო ქუჩებითა და ისტორიული საცხოვრებელი შენობებით. ბეთლემის კიბე მიდის ზემო და ქვემო ბეთლემის ეკლესიებთან, რომლებიც ქალაქის ერთ-ერთი უძველესია. აღმართი დიდი ხანია იყო როგორც მაცხოვრებლების, ისე წმინდა მთისკენ მიმავალი პილიგრიმების მარშრუტი.\n\n### საინტერესო ფაქტები\n*   ამ ტერიტორიაზე მდებარეობს ათეშგა, უძველესი ზოროასტრული ცეცხლის ტაძარი.\n*   ბევრი შენობა გამოირჩევა ქართული, ევროპული და ახლო აღმოსავლური არქიტექტურული სტილის უნიკალური ნაზავით.\n*   მთავარი კიბიდან გამავალი გვერდითი ჩიხების შესწავლა ხშირად მოულოდნელ და ლამაზ ხედებს გპირდებათ.\n\n### რჩევები ტურისტებს\n*   ჩაიცვით მყარი ფეხსაცმელი, რადგან კიბეები და ქვაფენილიანი ქუჩები ციცაბოა.\n*   ეს ბევრად უფრო ლამაზი და მშვიდი მარშრუტია ნარიყალასკენ, ვიდრე მთავარი გზა.\n*   ტერიტორია ლამაზია როგორც დღისით, ისე ღამით და განსხვავებულ ატმოსფეროს გთავაზობთ.\n*   პატივი ეცით მაცხოვრებლებს, რადგან საცხოვრებელ უბანში სეირნობთ."
+        },
+        address: { en: "Betlemi Street, Tbilisi", ru: "Улица Бетлеми, Тбилиси", ge: "ბეთლემის ქუჩა, თბილისი" },
+        contact: "N/A",
+        coords: { lat: 41.6903, lng: 44.8061 },
+        image: "https://picsum.photos/seed/betlemi-stairs/800/600",
+      },
+      {
+        id: "site-shardeni",
+        category: "sites",
+        title: { en: "Shardeni Street", ru: "Улица Шардени", ge: "შარდენის ქუჩა" },
+        description: {
+          en: "### Description\nA bustling, pedestrian-only street in the heart of Old Tbilisi, famous for its vibrant nightlife. Shardeni Street is lined with a variety of restaurants, cafes, trendy bars, and art galleries. It's one of the city's main cultural and social hubs, always buzzing with energy day and night.\n\n### History & Meaning\nThe street was named after the 17th-century French traveler Jean Chardin, who documented his visit to Tbilisi. Historically, this area was a center for craftsmen and merchants. In the early 2000s, it was renovated to become the lively entertainment district it is today.\n\n### Interesting Facts\n*   The street is home to several unique modern sculptures, including a miniature replica of the Eiffel Tower.\n*   Many of the buildings retain their historic facades despite modern interiors.\n*   It connects the Meidan Bazaar with Sioni Cathedral.\n\n### Tourist Tips\n*   Prices at restaurants and bars can be higher here than in other parts of the city.\n*   It's a great place for people-watching from an outdoor cafe.\n*   The street is relatively quiet during the day but comes alive after sunset.\n*   Be aware of 'tourist trap' restaurants; check reviews before choosing a place to eat.",
+          ru: "### Описание\nОживленная, пешеходная улица в самом сердце Старого Тбилиси, известная своей бурной ночной жизнью. Улица Шардени заполнена разнообразными ресторанами, кафе, модными барами и художественными галереями. Это один из главных культурных и социальных центров города, всегда полный энергии днем и ночью.\n\n### История и значение\nУлица была названа в честь французского путешественника XVII века Жана Шардена, который задокументировал свой визит в Тбилиси. Исторически этот район был центром ремесленников и торговцев. В начале 2000-х годов он был отреставрирован и превратился в оживленный развлекательный район, каким он является сегодня.\n\n### Интересные факты\n*   На улице находится несколько уникальных современных скульптур, включая миниатюрную копию Эйфелевой башни.\n*   Многие здания сохранили свои исторические фасады, несмотря на современные интерьеры.\n*   Она соединяет Мейдан Базар с собором Сиони.\n\n### Советы туристам\n*   Цены в ресторанах и барах здесь могут быть выше, чем в других частях города.\n*   Это отличное место для наблюдения за людьми из уличного кафе.\n*   Улица относительно тихая днем, но оживает после захода солнца.\n*   Остерегайтесь «туристических ловушек»; проверяйте отзывы, прежде чем выбрать место для еды.",
+          ge: "### აღწერა\nხალხმრავალი, მხოლოდ ფეხით მოსიარულეთათვის განკუთვნილი ქუჩა ძველი თბილისის გულში, რომელიც ცნობილია თავისი აქტიური ღამის ცხოვრებით. შარდენის ქუჩაზე განლაგებულია მრავალფეროვანი რესტორნები, კაფეები, მოდური ბარები და სამხატვრო გალერეები. ეს არის ქალაქის ერთ-ერთი მთავარი კულტურული და სოციალური ცენტრი, რომელიც დღე და ღამე ენერგიითაა სავსე.\n\n### ისტორია და მნიშვნელობა\nქუჩას სახელი ეწოდა XVII საუკუნის ფრანგი მოგზაურის, ჟან შარდენის პატივსაცემად, რომელმაც აღწერა თავისი ვიზიტი თბილისში. ისტორიულად, ეს ტერიტორია ხელოსნებისა და ვაჭრების ცენტრი იყო. 2000-იანი წლების დასაწყისში ის განახლდა და გადაიქცა ცოცხალ გასართობ უბნად.\n\n### საინტერესო ფაქტები\n*   ქუჩაზე რამდენიმე უნიკალური თანამედროვე ქანდაკებაა, მათ შორის ეიფელის კოშკის მინიატურული ასლი.\n*   ბევრ შენობას, თანამედროვე ინტერიერის მიუხედავად, შენარჩუნებული აქვს ისტორიული ფასადი.\n*   ის მეიდნის ბაზარს სიონის საკათედრო ტაძართან აკავშირებს.\n\n### რჩევები ტურისტებს\n*   რესტორნებსა და ბარებში ფასები შეიძლება უფრო მაღალი იყოს, ვიდრე ქალაქის სხვა ნაწილებში.\n*   ეს შესანიშნავი ადგილია ღია კაფედან ხალხზე დასაკვირვებლად.\n*   ქუჩა დღისით შედარებით წყნარია, მაგრამ მზის ჩასვლის შემდეგ ცოცხლდება.\n*   ფრთხილად იყავით „ტურისტული ხაფანგებისგან“; საჭმელად ადგილის არჩევამდე შეამოწმეთ მიმოხილვები."
+        },
+        address: { en: "Kote Abkhazi St, Tbilisi", ru: "Улица Котэ Абхази, Тбилиси", ge: "კოტე აფხაზის ქ, თბილისი" },
+        contact: "N/A",
+        coords: { lat: 41.6912, lng: 44.8073 },
+        image: "https://picsum.photos/seed/shardeni-street/800/600",
+      },
+      {
+        id: "site-peace-bridge",
+        category: "sites",
+        title: { en: "The Peace Bridge", ru: "Мост Мира", ge: "მშვიდობის ხიდი" },
+        description: {
+          en: "### Description\nA stunning example of modern architecture, the Peace Bridge is a bow-shaped pedestrian bridge over the Mtkvari River. Made of steel and glass and illuminated with thousands of LEDs, it connects Old Tbilisi with the newly developed Rike Park, creating a striking contrast between old and new.\n\n### History & Meaning\nCommissioned by President Mikheil Saakashvili and opened in 2010, the bridge was designed by Italian architect Michele De Lucchi. Its design was controversial among some, but it has since become a major city landmark. It's intended to symbolize Georgia's journey from its past to a brighter future.\n\n### Interesting Facts\n*   The lighting system was designed by French lighting designer Philippe Martinaud.\n*   The lights, which turn on 90 minutes before sunset, display patterns and messages, including the periodic table of elements.\n*   The bridge is 156 meters long.\n\n### Tourist Tips\n*   The bridge is most spectacular at night when it is fully illuminated.\n*   It's a fantastic spot for photos, offering views of the Presidential Palace, Narikala, and Metekhi Church.\n*   As it's pedestrian-only, it's a pleasant way to cross the river on foot.\n*   It can get very crowded, especially on summer evenings.",
+          ru: "### Описание\nПотрясающий пример современной архитектуры, Мост Мира — это пешеходный мост в форме лука через реку Мтквари. Сделанный из стали и стекла и освещенный тысячами светодиодов, он соединяет Старый Тбилиси с недавно созданным парком Рике, создавая поразительный контраст между старым и новым.\n\n### История и значение\nЗаказанный президентом Михаилом Саакашвили и открытый в 2010 году, мост был спроектирован итальянским архитектором Микеле Де Лукки. Его дизайн вызвал споры, но с тех пор он стал главной достопримечательностью города. Он призван символизировать путь Грузии из прошлого в светлое будущее.\n\n### Интересные факты\n*   Система освещения была разработана французским дизайнером по свету Филиппом Мартино.\n*   Огни, которые включаются за 90 минут до заката, отображают узоры и сообщения, включая периодическую таблицу элементов.\n*   Длина моста составляет 156 метров.\n\n### Советы туристам\n*   Мост наиболее впечатляюще выглядит ночью, когда он полностью освещен.\n*   Это фантастическое место для фотографий с видами на Президентский дворец, Нарикалу и церковь Метехи.\n*   Поскольку он только для пешеходов, это приятный способ пересечь реку пешком.\n*   Может быть очень многолюдно, особенно летними вечерами.",
+          ge: "### აღწერა\nთანამედროვე არქიტექტურის საოცარი ნიმუში, მშვიდობის ხიდი არის მშვილდის ფორმის საფეხმავლო ხიდი მდინარე მტკვარზე. ფოლადისა და მინისგან დამზადებული და ათასობით LED ნათურით განათებული, ის აკავშირებს ძველ თბილისს ახლად განვითარებულ რიყის პარკთან, ქმნის რა გასაოცარ კონტრასტს ძველსა და ახალს შორის.\n\n### ისტორია და მნიშვნელობა\nპრეზიდენტ მიხეილ სააკაშვილის დაკვეთით, ხიდი 2010 წელს გაიხსნა და მისი დიზაინი იტალიელ არქიტექტორს, მიკელე დე ლუკის ეკუთვნის. მისმა დიზაინმა გარკვეული დაპირისპირება გამოიწვია, მაგრამ მას შემდეგ ის ქალაქის მთავარ ღირსშესანიშნაობად იქცა. ის განასახიერებს საქართველოს გზას წარსულიდან ნათელი მომავლისკენ.\n\n### საინტერესო ფაქტები\n*   განათების სისტემა შექმნილია ფრანგი განათების დიზაინერის, ფილიპ მარტინოს მიერ.\n*   ნათურები, რომლებიც მზის ჩასვლამდე 90 წუთით ადრე ირთვება, აჩვენებს პატერნებსა და შეტყობინებებს, მათ შორის პერიოდულობის სისტემის ელემენტებს.\n*   ხიდის სიგრძე 156 მეტრია.\n\n### რჩევები ტურისტებს\n*   ხიდი ყველაზე შთამბეჭდავია ღამით, როდესაც ის სრულად არის განათებული.\n*   ეს არის ფანტასტიკური ადგილი ფოტოებისთვის, საიდანაც იშლება ხედები პრეზიდენტის სასახლეზე, ნარიყალასა და მეტეხის ეკლესიაზე.\n*   რადგან ის მხოლოდ ფეხით მოსიარულეთათვისაა, ეს სასიამოვნო საშუალებაა მდინარის ფეხით გადასაკვეთად.\n*   შეიძლება ძალიან ხალხმრავალი იყოს, განსაკუთრებით ზაფხულის საღამოობით."
+        },
+        address: { en: "Mtkvari River, Tbilisi", ru: "Река Мтквари, Тбилиси", ge: "მდინარე მტკვარი, თბილისი" },
+        contact: "N/A",
+        coords: { lat: 41.6931, lng: 44.8085 },
+        image: "https://picsum.photos/seed/peace-bridge/800/600",
+      },
+      {
+        id: "site-rike-park",
+        category: "sites",
+        title: { en: "Rike Park", ru: "Парк Рике", ge: "რიყის პარკი" },
+        description: {
+          en: "### Description\nA modern recreational area on the left bank of the Mtkvari River, connected to the Old Town by the Peace Bridge. Rike Park features musical fountains, a giant chessboard, children's playgrounds, and two futuristic tube-like buildings that house a concert hall and exhibition space.\n\n### History & Meaning\nDeveloped in the 2010s, Rike Park is part of a larger city modernization project. It transformed a relatively unused riverbank into a vibrant public space for locals and tourists alike. It represents the new, contemporary face of Tbilisi.\n\n### Interesting Facts\n*   The park is the starting point for the aerial tramway (cable car) that takes you up to Narikala Fortress.\n*   The two large, metallic tube structures were designed by Italian architects Massimiliano and Doriana Fuksas.\n*   The musical and dancing fountains are a major attraction in the evenings.\n\n### Tourist Tips\n*   It's a great place for families with children.\n*   Combine a visit to the park with a walk across the Peace Bridge and a cable car ride to Narikala.\n*   The park is free to enter.\n*   In summer, it's a popular spot to relax and cool down in the evening.",
+          ru: "### Описание\nСовременная зона отдыха на левом берегу реки Мтквари, соединенная с Старым городом Мостом Мира. В парке Рике есть музыкальные фонтаны, гигантская шахматная доска, детские площадки и два футуристических здания в виде труб, в которых размещаются концертный зал и выставочное пространство.\n\n### История и значение\nСозданный в 2010-х годах, парк Рике является частью более крупного проекта по модернизации города. Он превратил относительно неиспользуемый берег реки в оживленное общественное пространство для местных жителей и туристов. Он представляет новое, современное лицо Тбилиси.\n\n### Интересные факты\n*   Парк является отправной точкой для канатной дороги, которая доставит вас к крепости Нарикала.\n*   Две большие металлические трубчатые конструкции были спроектированы итальянскими архитекторами Массимилиано и Дорианой Фуксас.\n*   Музыкальные и танцующие фонтаны являются главной достопримечательностью по вечерам.\n\n### Советы туристам\n*   Это отличное место для семей с детьми.\n*   Совместите посещение парка с прогулкой по Мосту Мира и поездкой на канатной дороге к Нарикале.\n*   Вход в парк бесплатный.\n*   Летом это популярное место для отдыха и прохлады вечером.",
+          ge: "### აღწერა\nთანამედროვე დასასვენებელი ზონა მდინარე მტკვრის მარცხენა სანაპიროზე, რომელიც ძველ ქალაქს მშვიდობის ხიდით უკავშირდება. რიყის პარკში არის მუსიკალური შადრევნები, გიგანტური ჭადრაკის დაფა, საბავშვო მოედნები და ორი ფუტურისტული, მილის ფორმის შენობა, რომლებშიც საკონცერტო დარბაზი და საგამოფენო სივრცეა განთავსებული.\n\n### ისტორია და მნიშვნელობა\n2010-იან წლებში განვითარებული რიყის პარკი ქალაქის მოდერნიზაციის უფრო დიდი პროექტის ნაწილია. მან შედარებით გამოუყენებელი სანაპირო აქცია ცოცხალ საზოგადოებრივ სივრცედ როგორც ადგილობრივებისთვის, ისე ტურისტებისთვის. ის წარმოადგენს თბილისის ახალ, თანამედროვე სახეს.\n\n### საინტერესო ფაქტები\n*   პარკი არის საბაგიროს საწყისი წერტილი, რომელიც ნარიყალას ციხეზე აგიყვანთ.\n*   ორი დიდი, მეტალის მილის ფორმის სტრუქტურა დააპროექტეს იტალიელმა არქიტექტორებმა მასიმილიანო და დორიანა ფუქსასებმა.\n*   მუსიკალური და მოცეკვავე შადრევნები საღამოობით მთავარი ღირსშესანიშნაობაა.\n\n### რჩევები ტურისტებს\n*   ეს შესანიშნავი ადგილია ბავშვებიანი ოჯახებისთვის.\n*   შეუთავსეთ პარკის მონახულება მშვიდობის ხიდზე გასეირნებას და საბაგიროთი ნარიყალაზე ასვლას.\n*   პარკში შესვლა უფასოა.\n*   ზაფხულში ეს პოპულარული ადგილია საღამოს დასასვენებლად და გასაგრილებლად."
+        },
+        address: { en: "Left bank of Mtkvari River, Tbilisi", ru: "Левый берег реки Мтквари, Тбилиси", ge: "მტკვრის მარცხენა სანაპირო, თბილისი" },
+        contact: "N/A",
+        coords: { lat: 41.6934, lng: 44.8105 },
+        image: "https://picsum.photos/seed/rike-park/800/600",
+      },
+    {
+      id: "g2",
+      category: "restaurants",
+      title: { en: "Sakhli #11", ru: "Сахли #11", ge: "სახლი #11" },
+      description: {
+        en: "Cozy restaurant with traditional Georgian cuisine.",
+        ru: "Уютный ресторан с традиционной грузинской кухней.",
+        ge: "მყუდრო რესტორანი ტრადიციული ქართული სამზარეულოთი.",
+      },
+      address: {
+        en: "11 Galaktion Tabidze St",
+        ru: "ул. Галактиона Табидзе, 11",
+        ge: "გალაკტიონ ტაბიძის ქ. 11",
+      },
+      contact: "+995 322 92 03 50",
+      coords: { lat: 41.6918, lng: 44.8035 },
+      image: "https://picsum.photos/seed/sakhli/800/600",
+    },
+    {
+      id: "service-bank",
+      category: "services",
+      subCategory: "banks_atms",
+      title: { en: "TBC Bank", ru: "TBC Банк", ge: "თიბისი ბანკი" },
+      description: { en: "Main branch of TBC Bank, offering a full range of banking services, currency exchange, and 24/7 ATMs.", ru: "Главный филиал TBC Bank, предлагающий полный спектр банковских услуг, обмен валюты и круглосуточные банкоматы.", ge: "თიბისი ბანკის მთავარი ფილიალი, რომელიც გთავაზობთ საბანკო მომსახურების სრულ სპექტრს, ვალუტის გადაცვლას და 24/7 ბანკომატებს." },
+      address: { en: "4 Marjanishvili St, Tbilisi", ru: "ул. Марджанишвили 4, Тбилиси", ge: "მარჯანიშვილის ქ. 4, თბილისი" },
+      contact: "+995 322 27 27 27",
+      coords: { lat: 41.7093, lng: 44.7963 },
+      image: "https://picsum.photos/seed/tbc-bank/800/600",
+    },
+    {
+      id: "service-car-rental",
+      category: "services",
+      subCategory: "car_rentals",
+      title: { en: "Hertz Car Rental", ru: "Hertz Аренда Авто", ge: "Hertz მანქანის გაქირავება" },
+      description: { en: "International car rental service with a wide range of vehicles available, located conveniently in the city center.", ru: "Международная служба проката автомобилей с широким выбором транспортных средств, удобно расположенная в центре города.", ge: "მანქანების გაქირავების საერთაშორისო სერვისი, ავტომობილების ფართო არჩევანით, მოხერხებულად მდებარეობს ქალაქის ცენტრში." },
+      address: { en: "1 Baratashvili St, Tbilisi", ru: "ул. Бараташвили 1, Тбилиси", ge: "ბარათაშვილის ქ. 1, თბილისი" },
+      contact: "+995 322 19 11 91",
+      coords: { lat: 41.6963, lng: 44.8055 },
+      image: "https://picsum.photos/seed/hertz-rental/800/600",
+    },
+    {
+      id: "service-clinic",
+      category: "services",
+      subCategory: "medical_clinics",
+      title: { en: "Evex Medical Center", ru: "Медицинский центр Evex", ge: "სამედიცინო ცენტრი ევექსი" },
+      description: { en: "A modern, multi-profile medical center offering a wide range of outpatient services and diagnostics.", ru: "Современный многопрофильный медицинский центр, предлагающий широкий спектр амбулаторных услуг и диагностики.", ge: "თანამედროვე, მრავალპროფილური სამედიცინო ცენტრი, რომელიც გთავაზობთ ამბულატორიული მომსახურებისა და დიაგნოსტიკის ფართო სპექტრს." },
+      address: { en: "23 Kavtaradze St, Tbilisi", ru: "ул. Кавтарадзе 23, Тбилиси", ge: "ქავთარაძის ქ. 23, თბილისი" },
+      contact: "+995 322 55 05 05",
+      coords: { lat: 41.7259, lng: 44.7359 },
+      image: "https://picsum.photos/seed/evex-clinic/800/600",
+    },
+    {
+      id: "service-pharmacy",
+      category: "services",
+      subCategory: "pharmacy",
+      title: { en: "Aversi Pharmacy", ru: "Аптека Аверси", ge: "აფთიაქი ავერსი" },
+      description: { en: "A large 24/7 pharmacy offering a wide selection of medicines, cosmetics, and health products.", ru: "Большая круглосуточная аптека, предлагающая широкий выбор лекарств, косметики и товаров для здоровья.", ge: "დიდი 24/7 აფთიაქი, რომელიც გთავაზობთ მედიკამენტების, კოსმეტიკური და ჯანმრთელობის პროდუქტების ფართო არჩევანს." },
+      address: { en: "71 Vazha-Pshavela Ave, Tbilisi", ru: "пр. Важа-Пшавела 71, Тбилиси", ge: "ვაჟა-ფშაველას გამზ. 71, თბილისი" },
+      contact: "+995 322 99 99 99",
+      coords: { lat: 41.7228, lng: 44.7394 },
+      image: "https://picsum.photos/seed/aversi-pharmacy/800/600",
     },
 ];
 let MOCK_QUESTS: Quest[] = [

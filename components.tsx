@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 // FIX: Import 'useNavigate' from 'react-router-dom' to resolve usage error.
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useTranslations } from './hooks';
 import { useAuth } from './contexts';
 import { Icons } from './constants';
 import { api } from './services';
-import { Review, LocalGuideItem } from './types';
+import { Review, LocalGuideItem, Language } from './types';
 import { useTTS } from './hooks';
 
 export const Menu: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
@@ -366,115 +366,83 @@ export const TTSButton: React.FC<{ textToSpeak: string; className?: string }> = 
     );
 };
 
-interface Point { x: number; y: number; }
-interface Cluster {
-  items: LocalGuideItem[];
-  centerPoint: Point;
-  id: string;
-}
+export const MapView: React.FC<{ items: LocalGuideItem[]; language: Language }> = ({ items, language }) => {
 
-export const MapView: React.FC<{ items: LocalGuideItem[]; onMarkerClick: (id: string) => void }> = ({ items, onMarkerClick }) => {
-    const [clusters, setClusters] = useState<Cluster[]>([]);
-    const mapRef = React.useRef<HTMLDivElement>(null);
-    const { language } = useTranslations();
+    const mapHtmlContent = useMemo(() => {
+        const points = items.map(item => ({
+            lat: item.coords.lat,
+            lng: item.coords.lng,
+            title: (item.title[language] || item.title.en).replace(/'/g, "\\'").replace(/"/g, '\\"')
+        }));
 
-    useEffect(() => {
-        const calculateClusters = () => {
-            if (!mapRef.current || items.length === 0) {
-                setClusters([]);
-                return;
-            };
+        return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Map</title>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+                <style> html, body, #map { margin: 0; padding: 0; height: 100%; width: 100%; } </style>
+            </head>
+            <body>
+                <div id="map"></div>
+                <script>
+                    const map = L.map('map');
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
 
-            const mapWidth = mapRef.current.offsetWidth;
-            const mapHeight = mapRef.current.offsetHeight;
-            if (mapWidth === 0 || mapHeight === 0) return;
-
-            // Simplified bounds for Tbilisi
-            const bounds = { north: 41.8, south: 41.6, west: 44.7, east: 44.95 };
-            
-            const project = (lat: number, lng: number): Point => {
-                const y = mapHeight - ((lat - bounds.south) / (bounds.north - bounds.south)) * mapHeight;
-                const x = ((lng - bounds.west) / (bounds.east - bounds.west)) * mapWidth;
-                return { x, y };
-            };
-
-            const projectedItems = items.map(item => ({ item, point: project(item.coords.lat, item.coords.lng) }));
-
-            const CLUSTER_RADIUS_PX = 60;
-            const isClustered = new Array(items.length).fill(false);
-            const newClusters: Cluster[] = [];
-
-            for (let i = 0; i < items.length; i++) {
-                if (isClustered[i]) continue;
-
-                const current = projectedItems[i];
-                const clusterItems = [current.item];
-                isClustered[i] = true;
-
-                for (let j = i + 1; j < items.length; j++) {
-                    if (isClustered[j]) continue;
-
-                    const other = projectedItems[j];
-                    const distance = Math.sqrt(
-                        Math.pow(current.point.x - other.point.x, 2) +
-                        Math.pow(current.point.y - other.point.y, 2)
-                    );
-
-                    if (distance < CLUSTER_RADIUS_PX) {
-                        clusterItems.push(other.item);
-                        isClustered[j] = true;
+                    const points = ${JSON.stringify(points)};
+                    
+                    const markers = points.map(p => {
+                        return L.marker([p.lat, p.lng]).addTo(map).bindPopup('<b>' + p.title + '</b>');
+                    });
+                    
+                    if (markers.length > 0) {
+                        const group = new L.featureGroup(markers);
+                        map.fitBounds(group.getBounds().pad(0.1));
+                    } else {
+                        map.setView([41.7151, 44.8271], 12);
                     }
-                }
-                newClusters.push({
-                    items: clusterItems,
-                    centerPoint: current.point,
-                    id: current.item.id, // Use first item's ID as key
-                });
-            }
-            setClusters(newClusters);
-        };
-        
-        const handleResize = () => calculateClusters();
-        window.addEventListener('resize', handleResize);
-        const timer = setTimeout(calculateClusters, 50);
+                </script>
+            </body>
+            </html>
+        `;
+    }, [items, language]);
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            clearTimeout(timer);
-        };
-    }, [items]);
+    if (!items || items.length === 0) {
+        return (
+            <div className="relative w-full aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden shadow-inner">
+                <iframe
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=44.75,41.68,44.85,41.75&layer=mapnik"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen={true}
+                    loading="lazy"
+                    title="Tbilisi Map View"
+                    referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+            </div>
+        );
+    }
 
     return (
-        <div ref={mapRef} className="relative w-full aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden shadow-inner">
-            <img src="https://picsum.photos/seed/tbilisimap/1200/900" alt="Tbilisi Map" className="w-full h-full object-cover opacity-50" />
-            
-            {clusters.map(cluster => {
-                const isSingle = cluster.items.length === 1;
-                const singleItem = isSingle ? cluster.items[0] : null;
-
-                return (
-                    <div
-                        key={cluster.id}
-                        className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-transform ${isSingle ? 'cursor-pointer hover:scale-110' : ''}`}
-                        style={{ top: `${cluster.centerPoint.y}px`, left: `${cluster.centerPoint.x}px` }}
-                        onClick={singleItem ? () => onMarkerClick(singleItem.id) : undefined}
-                        title={singleItem ? singleItem.title[language] : `${cluster.items.length} places`}
-                    >
-                        {singleItem ? (
-                            <div className="text-primary text-3xl">
-                                <Icons.MapPin />
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-center w-10 h-10 bg-primary/80 text-white rounded-full font-bold text-lg border-2 border-white shadow-lg">
-                                {cluster.items.length}
-                            </div>
-                        )}
-                    </div>
-                );
-            })}
+        <div className="relative w-full aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden shadow-inner">
+            <iframe
+                srcDoc={mapHtmlContent}
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                title="Tbilisi Map View with Items"
+                sandbox="allow-scripts"
+            ></iframe>
         </div>
     );
 };
+
 
 export const ImageUpload: React.FC<{
   label: string;

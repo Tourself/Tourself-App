@@ -4,7 +4,7 @@ import { useTranslations } from '../hooks';
 import { useAuth } from '../contexts';
 import { Button, Card, Header, Input, StarRating, LoadingSpinner, Textarea, Select, ImageUpload, LocationSearchInput, RichTextInput } from '../components';
 import { api, authService } from '../services';
-import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage, HomePageContent } from '../types';
+import { Review, Quest, QuestDifficulty, QuestionType, QuestStep, Language, LocalGuideItem, QuestStatus, AuthUser, InfoPage, HomePageContent, ServiceSubCategory } from '../types';
 
 export const AdminLayout: React.FC = () => {
     const { t } = useTranslations();
@@ -655,7 +655,7 @@ const AdminGuideListPage: React.FC = () => {
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('guide_item_title')}</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('category')}</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('address')}</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('sub_category')}</th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
@@ -664,7 +664,7 @@ const AdminGuideListPage: React.FC = () => {
                                 <tr key={item.id}>
                                     <td className="px-6 py-4 whitespace-nowrap font-medium">{item.title[language]}</td>
                                     <td className="px-6 py-4 whitespace-nowrap capitalize">{item.category}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{item.address[language]}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap capitalize">{item.subCategory ? t(item.subCategory) : 'N/A'}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
                                         <Button onClick={() => navigate(`/admin/guide/edit/${item.id}`)} variant="secondary">Edit</Button>
                                         <Button onClick={() => handleDelete(item.id)} variant="outline">Delete</Button>
@@ -687,6 +687,7 @@ const AdminGuideFormPage: React.FC = () => {
         description: { en: '', ru: '', ge: '' },
         address: { en: '', ru: '', ge: '' },
         category: 'sites',
+        subCategory: undefined,
         contact: '',
         coords: { lat: 41.7151, lng: 44.8271 },
         image: ''
@@ -714,16 +715,23 @@ const AdminGuideFormPage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
+        const itemToSave = { ...item };
+        if (itemToSave.category !== 'services') {
+            delete itemToSave.subCategory;
+        }
+        
         if (id) {
-            await api.updateGuideItem(id, item as LocalGuideItem);
+            await api.updateGuideItem(id, itemToSave as LocalGuideItem);
         } else {
-            await api.createGuideItem(item);
+            await api.createGuideItem(itemToSave);
         }
         setIsSaving(false);
         navigate('/admin/guide');
     };
     
     if (loading) return <LoadingSpinner />;
+    
+    const serviceSubCategories: ServiceSubCategory[] = ['banks_atms', 'car_rentals', 'medical_clinics', 'pharmacy'];
 
     return (
         <div>
@@ -765,8 +773,16 @@ const AdminGuideFormPage: React.FC = () => {
                             <option value="restaurants">{t('restaurants')}</option>
                             <option value="services">{t('services')}</option>
                         </Select>
-                        <Input label={t('contact')} value={item.contact} onChange={e => handleItemChange('contact', e.target.value)} />
+                        {item.category === 'services' && (
+                            <Select label={t('sub_category')} value={item.subCategory || ''} onChange={e => handleItemChange('subCategory', e.target.value)}>
+                                <option value="">Select...</option>
+                                {serviceSubCategories.map(subCat => (
+                                    <option key={subCat} value={subCat}>{t(subCat)}</option>
+                                ))}
+                            </Select>
+                        )}
                     </div>
+                     <Input label={t('contact')} value={item.contact} onChange={e => handleItemChange('contact', e.target.value)} />
                      <LocationSearchInput
                         label={t('current_location')}
                         currentCoords={item.coords}
