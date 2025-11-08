@@ -86,6 +86,8 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'quest': 'quest on',
     'download_certificate': 'Download Certificate',
     'back_to_quests': 'Back to Quests',
+    'share_result': 'Share Your Result',
+    'correctly_answered': 'You correctly answered {correct} out of {total} questions!',
     
     // Checkout
     'secure_checkout': 'Secure Checkout',
@@ -283,6 +285,8 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'create_quest': 'Создать квест',
     'submit_for_approval': 'Отправить на проверку',
     'post_answer_info': 'Информация после ответа',
+    'share_result': 'Поделиться результатом',
+    'correctly_answered': 'Вы правильно ответили на {correct} из {total} вопросов!',
   },
   ge: {
     // This would be fully translated in a real app
@@ -361,6 +365,8 @@ export const TEXTS: Record<Language, Record<string, string>> = {
     'create_quest': 'ქვესტის შექმნა',
     'submit_for_approval': 'გაგზავნა დასამტკიცებლად',
     'post_answer_info': 'ინფორმაცია პასუხის შემდეგ',
+    'share_result': 'შედეგის გაზიარება',
+    'correctly_answered': 'თქვენ სწორად უპასუხეთ {correct} კითხვას {total}-დან!',
   },
 };
 

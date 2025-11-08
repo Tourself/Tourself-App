@@ -1,12 +1,10 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useLanguage } from '../contexts';
 import { useTranslations } from '../hooks';
 import { Button, Card, Header, Input, NotificationOptIn, LoadingSpinner } from '../components';
 import { geofencingService, api, calculateDistance } from '../services';
-import { LocalGuideItem, HomePageContent } from '../types';
+import { LocalGuideItem, HomePageContent, Quest } from '../types';
 
 export const LanguageSelectorPage: React.FC = () => {
   const { setLanguage, t } = useLanguage();
@@ -173,5 +171,222 @@ export const HomePage: React.FC = () => {
     );
 };
 
-export const CheckoutPage: React.FC = () => { /* ... existing code ... */ };
-export const QuestCompletionPage: React.FC = () => { /* ... existing code ... */ };
+export const CheckoutPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { t, language } = useTranslations();
+  const navigate = useNavigate();
+
+  const [quest, setQuest] = useState<Quest | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [messenger, setMessenger] = useState('');
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [purchaseComplete, setPurchaseComplete] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+
+  useEffect(() => {
+    if (id) {
+      api.getQuest(id).then(data => {
+        setQuest(data || null);
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  const handlePayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    
+    // Simulate payment processing
+    await new Promise(res => setTimeout(res, 2000));
+
+    const token = `TOURSELF-${id}-${Date.now()}`.slice(0, 24).toUpperCase();
+    localStorage.setItem(`quest-token-${id!}`, token);
+    
+    // Save user name and initialize progress
+    localStorage.setItem(`quest-user-${id!}`, fullName);
+    if (quest) {
+        localStorage.setItem(`quest-progress-${id!}`, JSON.stringify({
+            correctAnswers: 0,
+            totalSteps: quest.steps.length,
+            completedSteps: []
+        }));
+    }
+    
+    setAccessToken(token);
+    setPurchaseComplete(true);
+    setIsProcessing(false);
+  };
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
+  }
+
+  if (!quest) {
+    return <div className="p-4">Quest not found.</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-secondary">
+      <Header title={t('secure_checkout')} showBack />
+      <main className="p-4 flex justify-center">
+        <Card className="w-full max-w-md mt-8">
+          {purchaseComplete ? (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-green-600 mb-2">{t('quest_purchased')}</h2>
+              <p className="mb-4">{t('access_token_info')}</p>
+              <div className="bg-gray-100 p-4 rounded-lg font-mono text-lg my-4 border-dashed border-2 border-gray-400">
+                {accessToken}
+              </div>
+              <Button onClick={() => navigate(`/quest/play/${id}/0`)} className="w-full">{t('start_quest')}</Button>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-2xl font-bold text-dark mb-4">{quest.title[language]}</h2>
+              <div className="mb-6 pb-4 border-b">
+                <p className="text-3xl font-bold text-primary text-center">${quest.price.toFixed(2)}</p>
+              </div>
+              <form onSubmit={handlePayment} className="space-y-4">
+                <Input
+                  id="fullName"
+                  label={t('full_name')}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+                <Input
+                  id="email"
+                  type="email"
+                  label={t('email_address')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <Input
+                  id="messenger"
+                  label={t('messenger_contact')}
+                  value={messenger}
+                  onChange={(e) => setMessenger(e.target.value)}
+                  required
+                />
+                <Button type="submit" className="w-full" disabled={isProcessing}>
+                  {isProcessing ? t('loading') : `${t('pay_now').replace('$9.99', `$${quest.price.toFixed(2)}`)}`}
+                </Button>
+              </form>
+            </>
+          )}
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export const QuestCompletionPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const { t, language } = useTranslations();
+  const [quest, setQuest] = useState<Quest | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [userName, setUserName] = useState('A Valiant Adventurer');
+  const [progress, setProgress] = useState<{ correctAnswers: number; totalSteps: number } | null>(null);
+
+  useEffect(() => {
+    if (id) {
+      api.getQuest(id).then(data => {
+        setQuest(data || null);
+        
+        const name = localStorage.getItem(`quest-user-${id}`);
+        if (name) {
+          setUserName(name);
+        }
+
+        const progressRaw = localStorage.getItem(`quest-progress-${id}`);
+        if (progressRaw) {
+          setProgress(JSON.parse(progressRaw));
+        }
+
+        setLoading(false);
+      });
+    }
+  }, [id]);
+
+  const handleDownload = () => {
+    // Mock download
+    alert("Certificate download started!");
+  };
+
+  const handleShare = async () => {
+    if (navigator.share && quest && progress) {
+      try {
+        await navigator.share({
+          title: `${t('congratulations')}!`,
+          text: `I just completed the "${quest.title[language]}" quest and scored ${progress.correctAnswers}/${progress.totalSteps}! Check out TOURSELF.`,
+          url: window.location.origin,
+        });
+      } catch (error) {
+        console.error('Error sharing result:', error);
+      }
+    } else {
+      alert('Sharing is not supported on this device.');
+    }
+  };
+  
+  const completionDate = new Date().toLocaleDateString(language, {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
+  }
+
+  if (!quest) {
+    return <div className="p-4">Quest not found.</div>;
+  }
+  
+  const backgroundStyle = {
+    backgroundImage: `linear-gradient(rgba(241, 250, 238, 0.95), rgba(241, 250, 238, 0.95)), url('https://images.unsplash.com/photo-1579033461380-adb47c3eb938?q=80&w=1920&auto=format&fit=crop')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
+
+  return (
+    <div className="min-h-screen bg-secondary">
+      <Header title={t('quest_complete')} showBack />
+      <main className="p-4 text-center">
+        <Card>
+          <h1 className="text-3xl font-bold text-primary mb-2">{t('congratulations')}</h1>
+          <p className="text-lg text-gray-700">{t('completion_message')}</p>
+
+          <div className="my-8 p-6 border-4 border-accent rounded-lg shadow-inner max-w-lg mx-auto" style={backgroundStyle}>
+            <h2 className="text-4xl font-bold tracking-widest text-dark mb-4">TOURSELF</h2>
+            <h3 className="text-3xl font-bold text-dark mb-4 drop-shadow-sm" style={{ fontFamily: "'Brush Script MT', cursive" }}>{t('certificate_of_completion')}</h3>
+            <p className="text-md text-gray-700 mb-2">{t('awarded_to')}</p>
+            <p className="text-4xl font-semibold text-primary mb-4 drop-shadow-sm" style={{ fontFamily: "'Brush Script MT', cursive" }}>{userName}</p>
+            <p className="text-md text-gray-700">
+              {t('for_completing')}
+              <br/>
+              <span className="font-bold text-dark text-lg">"{quest.title[language]}"</span>
+              <br/>
+              {t('quest')} {completionDate}
+            </p>
+            {progress && (
+                <p className="mt-4 text-md text-gray-700 font-semibold">
+                    {t('correctly_answered', { correct: String(progress.correctAnswers), total: String(progress.totalSteps) })}
+                </p>
+            )}
+          </div>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-lg mx-auto">
+            <Button onClick={handleDownload} className="flex-1">{t('download_certificate')}</Button>
+            <Button onClick={handleShare} variant="secondary" className="flex-1">{t('share_result')}</Button>
+            <Link to="/quests" className="flex-1">
+              <Button variant="outline" className="w-full">{t('back_to_quests')}</Button>
+            </Link>
+          </div>
+        </Card>
+      </main>
+    </div>
+  );
+};

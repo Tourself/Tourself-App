@@ -216,9 +216,9 @@ export const QuestPlayPage: React.FC = () => {
             if (id && stepIndex !== undefined) {
                 setLoading(true);
                 const questData = await api.getQuest(id);
-                if (questData && questData.steps[parseInt(stepIndex)]) {
+                if (questData && questData.steps[parseInt(stepIndex, 10)]) {
                     setQuest(questData);
-                    setCurrentStep(questData.steps[parseInt(stepIndex)]);
+                    setCurrentStep(questData.steps[parseInt(stepIndex, 10)]);
                 }
                 setLoading(false);
             }
@@ -246,7 +246,6 @@ export const QuestPlayPage: React.FC = () => {
         e.preventDefault();
         if (!currentStep) return;
         
-        // This is a mock check. A real app would have more robust logic.
         const correctAnswers = currentStep.question.answer[language].toLowerCase().split(',').map(s => s.trim());
         const userAnswerClean = userAnswer.toLowerCase().trim();
 
@@ -256,6 +255,27 @@ export const QuestPlayPage: React.FC = () => {
         if (isCorrect) {
             setFeedback(t('feedback_correct'));
             setShowPostAnswer(true);
+
+            if (id && stepIndex !== undefined) {
+                const currentStepIdx = parseInt(stepIndex, 10);
+                const progressRaw = localStorage.getItem(`quest-progress-${id}`);
+                if (progressRaw) {
+                    try {
+                        const progress = JSON.parse(progressRaw);
+                        if (!Array.isArray(progress.completedSteps)) {
+                            progress.completedSteps = [];
+                        }
+                        
+                        if (!progress.completedSteps.includes(currentStepIdx)) {
+                            progress.correctAnswers += 1;
+                            progress.completedSteps.push(currentStepIdx);
+                            localStorage.setItem(`quest-progress-${id}`, JSON.stringify(progress));
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse or update quest progress", e);
+                    }
+                }
+            }
         } else {
             setFeedback(t('wrong_answer'));
         }
