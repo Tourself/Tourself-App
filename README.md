@@ -47,10 +47,6 @@ This is the most critical step. Do not run `npm install` from the terminal first
     ```
     This creates a `dist` folder inside your project directory containing your live website files.
 
-> **Troubleshooting the `node_modules` Error**
-> If the "Run NPM Install" button gives you the error `Cloudlinux NodeJS Selector demands to store node modules...`, it means a `node_modules` folder was created incorrectly.
-> **Solution:** Use the cPanel **File Manager**, navigate to your project folder (`/home/your_user/tourself`), **delete** the `node_modules` folder, and then go back and click the **Run NPM Install** button again.
-
 ### Step 4: Configure Apache to Serve the App
 
 The final step is to tell the webserver how to find and serve your built application.
@@ -74,6 +70,40 @@ The final step is to tell the webserver how to find and serve your built applica
     </IfModule>
     ```
 4.  **Save the file.** Go to your Application URL, and your site should now be live!
+
+---
+## Troubleshooting
+
+### Error: `WebAssembly.instantiate(): Out of memory`
+
+This error occurs during the `npm run build` step because the build process requires more memory than your cPanel Node.js application is allowed by default.
+
+**Solution: Increase the Memory Limit**
+
+1.  In cPanel, go to **Setup Node.js App**.
+2.  Find your application in the list and click the **Edit (pencil) icon**.
+3.  Scroll down to the field labeled **NODE_OPTIONS**.
+4.  In the box, enter the following to increase the memory limit to 2GB:
+    ```
+    --max-old-space-size=2048
+    ```
+5.  Click **Save**, and then click the **Restart** button at the top of the page.
+6.  Go back to the **Terminal**, enter the virtual environment again, `cd` to your project directory, and re-run `npm run build`. The build should now complete successfully.
+
+**Alternative Solution: Build Locally**
+
+If you cannot increase the memory limit, you can build the project on your own computer and upload only the final files.
+1. On your local machine, run `npm install` and then `npm run build`.
+2. This will create a `dist` folder.
+3. In cPanel's **File Manager**, navigate to your project's folder (`/home/your_user/tourself`).
+4. **Delete** any existing `dist` folder on the server.
+5. Click **Upload**, select the `dist` folder from your local machine, and upload it as a `.zip` file.
+6. Once uploaded, right-click the `dist.zip` file and select **Extract**.
+
+### Error: `Cloudlinux NodeJS Selector demands to store node modules...`
+
+This happens if you run `npm install` in the terminal before using the cPanel button.
+**Solution:** Use the cPanel **File Manager**, navigate to your project folder (`/home/your_user/tourself`), **delete** the `node_modules` folder, and then go back and click the **Run NPM Install** button on the "Setup Node.js App" page.
 
 ---
 
